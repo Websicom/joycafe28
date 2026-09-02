@@ -1,0 +1,16 @@
+{
+  "name": "Joy Cafe & Wine Bar",
+  "short_name": "Joy Cafe",
+  "description": "Healthy by day, naughty by night.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f4ec",
+  "theme_color": "#f8f4ec",
+  "icons": [
+    {
+      "src": "/assets/brand/joy-favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

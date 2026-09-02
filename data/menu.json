@@ -1,0 +1,37 @@
+{
+  "daytime": {
+    "title": "Brunch / Lunch",
+    "availability": "Wednesday – Saturday, 11am – 2pm",
+    "intro": "Our menu changes with the seasons while keeping a few core favourites. Expect nourishing food, simple plates and things we genuinely love to eat.",
+    "items": [
+      { "name": "Warm Banana Bread", "price": "£5.50", "description": "with organic butter & maple candied pecans" },
+      { "name": "Açaí Bowl", "price": "£9.00", "description": "topped with sliced banana, cashew & cinnamon granola" },
+      { "name": "Eggs", "price": "£9.00", "description": "soft boiled on toasted rye topped with kale & seeds" },
+      { "name": "Whipped Avocado", "price": "£8.50", "description": "on toasted sourdough with lemon, crumbled feta, dressed rocket & seeds" },
+      { "name": "Baron Bigod", "price": "£9.50", "description": "British cheese on toasted cranberry rye with fig & honey chutney" },
+      { "name": "Tomato Focaccia", "price": "£9.50", "description": "toasted & topped with organic tomatoes, garlic & basil oil" },
+      { "name": "Pork, Prune & Pistachio Terrine", "price": "£13.00", "description": "with dressed watercress & crispy sourdough" },
+      { "name": "Seasonal Soup / Broth", "price": "£9.00", "description": "Courgette soup, halloumi croutons, sourdough" },
+      { "name": "Seasonal Salad", "price": "£10.00", "description": "orzo, organic tomatoes, red onion, kale, toasted pistachios, basil, olive oil & balsamic dressing" },
+      { "name": "Add Halloumi", "price": "£3.50", "description": "" }
+    ],
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
+  },
+  "evening": {
+    "title": "Evening Menu",
+    "availability": "Thursday 6pm – 9pm & Friday 2pm – 6pm",
+    "intro": "Our cheeses are carefully selected from award-winning Rennet & Rind. Our charcuterie comes from Sunday Charcuterie, known for 100% British cured meats. Both are best enjoyed with good bread, perhaps some olives, and naturally, a lovely glass of wine.",
+    "items": [
+      { "name": "Baron Bigod", "price": "£9.50", "description": "British cheese on toasted cranberry rye with fig & honey chutney" },
+      { "name": "Delice de Bourgogne", "price": "£9.50", "description": "our favourite French cheese, toasted focaccia & red onion chutney" },
+      { "name": "Cheese Plate", "price": "£14.00", "description": "Baron Bigod, Westcomb, Alpin Cheddar and The Duke. Sourdough crackers, gherkins, fig and honey chutney" },
+      { "name": "Salami Plate", "price": "£12.00", "description": "with antipasti" },
+      { "name": "Pork, Prune & Pistachio Terrine", "price": "£13.00", "description": "with dressed watercress & crispy sourdough" },
+      { "name": "Seasonal Salad", "price": "£10.00", "description": "orzo, organic tomatoes, red onion, kale, toasted pistachios, basil, olive oil & balsamic dressing" },
+      { "name": "Bread Plate", "price": "£5.50", "description": "lightly toasted focaccia, cranberry rye & sourdough served with olive tapenade, oil & balsamic" },
+      { "name": "Affogato", "price": "£5.00", "description": "Espresso, organic clotted cream ice cream & biscotti", "group": "Dessert" }
+    ],
+    "additionalNote": "Cheese & charcuterie boards are available to pre-order for groups of three or more. Just let us know when booking your table if you'd like one prepared for you.",
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "joy-cafe-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run images && node scripts/build.mjs && node scripts/dev.mjs",
+    "build": "npm run images && node scripts/build.mjs",
+    "images": "node scripts/images.mjs",
+    "test": "node scripts/qa.mjs"
+  },
+  "devDependencies": {
+    "@fontsource/cormorant-garamond": "^5.2.8",
+    "@fontsource/manrope": "^5.2.8",
+    "sharp": "^0.34.3"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "provider": "sumup",
+  "fallbackUrl": "https://www.sumupbookings.com/joycafewinebar",
+  "mode": "fallback",
+  "partySizes": [1, 2, 3, 4],
+  "services": [
+    { "id": "brunch-lunch", "label": "Brunch/Lunch" },
+    { "id": "evening", "label": "Evening Menu" }
+  ]
+}
