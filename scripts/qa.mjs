@@ -37,7 +37,7 @@ assert(homepage.includes('id="theme-mode"') && !homepage.includes('id="theme-aut
 assert(homepage.includes('<style>@font-face') && !homepage.includes('<link rel="stylesheet" href="/assets/css/styles.css">'), 'index.html: homepage CSS should be inlined for first-paint performance');
 assert(!homepage.includes('data-mode="auto"') && !homepage.includes('theme-icon-auto'), 'index.html: theme control should offer light and dark modes only');
 assert(homepage.includes('id="night"') && homepage.includes('id="reviews"'), 'index.html: automatic theme needs its night and day section markers');
-assert(themeScript.includes('override || getScrollTheme()') && themeScript.includes("window.addEventListener('scroll'"), 'theme.js: automatic scroll theme should remain the default');
+assert(themeScript.includes("mode === 'night' ? 'night' : getScrollTheme()") && themeScript.includes("if (mode === 'day')") && themeScript.includes("window.addEventListener('scroll'"), 'theme.js: day mode should retain automatic night sections while dark mode remains global');
 assert(homepage.includes('<h1 id="hero-title"><span>joy Cafe &amp;</span> <span>Wine Bar</span></h1>'), 'index.html: hero heading should use the requested two-line wordmark');
 assert(homepage.includes('Tasty food.<br>Really good coffee.'), 'index.html: day heading should say Tasty food');
 assert(homepage.includes('Kind words,<br>lovingly shared.'), 'index.html: reviews heading should use the requested wording');

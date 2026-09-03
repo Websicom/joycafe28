@@ -109,7 +109,7 @@ body[data-theme="night"] .booking-form input[type="date"]{color-scheme:dark}
 .final-cta-inner>div{width:100%;display:flex;align-items:center;justify-content:center}
 
 .hero h1 span{display:block}
-.hero h1{font-size:clamp(4rem,8.3vw,8.3rem)}
+.hero h1{display:flex;flex-direction:column;gap:.08em;font-size:clamp(4rem,8.3vw,8.3rem);line-height:.88}
 @media(max-width:640px){.hero h1{font-size:clamp(3.8rem,19vw,5.95rem)}}
 @media(max-width:360px){.hero h1{font-size:3.6rem}}
 @media(max-width:900px){.nav-dropdown>button{justify-content:space-between}.day-intro .image-frame,.story-images,.coffee-images{max-width:720px}.story-images{padding-right:2rem}.coffee-images{padding-left:2rem}}

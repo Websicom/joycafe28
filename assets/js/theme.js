@@ -1,21 +1,20 @@
-const storageKey = 'joy-theme-override-v2';
+const storageKey = 'joy-theme-mode-v3';
 
 export function initTheme() {
   const body = document.body;
   const modeButton = document.querySelector('#theme-mode');
   const nightZone = document.querySelector('#night');
   const dayZone = document.querySelector('#reviews');
-  let override = sessionStorage.getItem(storageKey);
-  if (!['day', 'night'].includes(override)) override = null;
+  let mode = sessionStorage.getItem(storageKey) || 'day';
+  if (!['day', 'night'].includes(mode)) mode = 'day';
 
   const apply = (theme) => {
     body.dataset.theme = theme;
     if (modeButton) {
-      const nextMode = theme === 'day' ? 'night' : 'day';
-      const source = override ? '' : 'Automatic ';
-      modeButton.dataset.mode = theme;
-      modeButton.title = `Switch to ${nextMode === 'day' ? 'light' : 'dark'} theme`;
-      modeButton.setAttribute('aria-label', `${source}${theme === 'day' ? 'light' : 'dark'} theme active. Switch to ${nextMode === 'day' ? 'light' : 'dark'} theme`);
+      const nextMode = mode === 'day' ? 'night' : 'day';
+      modeButton.dataset.mode = mode;
+      modeButton.title = `Switch to ${nextMode === 'day' ? 'day' : 'dark'} theme`;
+      modeButton.setAttribute('aria-label', `${mode === 'day' ? 'Day' : 'Dark'} theme active. Switch to ${nextMode === 'day' ? 'day' : 'dark'} theme`);
     }
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'night' ? '#1b1815' : '#f8f4ec');
   };
@@ -29,14 +28,14 @@ export function initTheme() {
   }
 
   modeButton?.addEventListener('click', () => {
-    override = body.dataset.theme === 'day' ? 'night' : 'day';
-    sessionStorage.setItem(storageKey, override);
-    apply(override);
+    mode = mode === 'day' ? 'night' : 'day';
+    sessionStorage.setItem(storageKey, mode);
+    apply(mode === 'night' ? 'night' : getScrollTheme());
   });
 
   let ticking = false;
   const updateAutomaticTheme = () => {
-    if (!override) {
+    if (mode === 'day') {
       const theme = getScrollTheme();
       if (body.dataset.theme !== theme) apply(theme);
     }
@@ -51,8 +50,8 @@ export function initTheme() {
   window.addEventListener('scroll', requestAutomaticTheme, { passive: true });
   window.addEventListener('resize', requestAutomaticTheme);
 
-  apply(override || getScrollTheme());
+  apply(mode === 'night' ? 'night' : getScrollTheme());
   window.addEventListener('pageshow', () => {
-    if (!override) apply(getScrollTheme());
+    if (mode === 'day') apply(getScrollTheme());
   });
 }
