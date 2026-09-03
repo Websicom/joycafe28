@@ -45,6 +45,10 @@ assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('class="quick-info-action"'), 'index.html: plan-a-visit action should keep its arrow inline');
 assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
+assert(!homepage.includes('↗') && homepage.includes('class="link-arrow"'), 'index.html: arrows should use Safari-safe line SVGs');
+assert(homepage.includes('joy-cafe-melbourn-interior-mobile.avif'), 'index.html: mobile hero should use the optimized AVIF source');
+const favicon = await readFile(path.join(root, 'favicon.ico'));
+assert(favicon.length < 10_000 && favicon.readUInt16LE(2) === 1 && favicon.readUInt16LE(4) === 3, 'favicon.ico: expected an optimized three-size icon');
 assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');
 
 const bookingWeek = getBookingWeek('2026-09-09');

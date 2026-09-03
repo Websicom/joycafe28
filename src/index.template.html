@@ -24,7 +24,7 @@
   <link rel="icon" href="/assets/brand/joy-favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/assets/brand/joy-favicon-512.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-mobile.avif" type="image/avif" media="(max-width: 640px)" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-1440.webp" imagesrcset="/assets/images/joy-cafe-melbourn-interior-768.webp 768w, /assets/images/joy-cafe-melbourn-interior-1024.webp 1024w, /assets/images/joy-cafe-melbourn-interior-1440.webp 1440w, /assets/images/joy-cafe-melbourn-interior-1920.webp 1920w" imagesizes="100vw" type="image/webp" media="(min-width: 641px)" fetchpriority="high">
   <style>{{INLINE_CSS}}</style>
   <script type="application/ld+json">{{LOCAL_BUSINESS_JSONLD}}</script>
@@ -64,6 +64,7 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <picture class="hero-media">
+        <source media="(max-width: 640px)" type="image/avif" srcset="/assets/images/joy-cafe-melbourn-interior-mobile.avif">
         <source media="(max-width: 640px)" type="image/webp" srcset="/assets/images/joy-cafe-melbourn-interior-mobile.webp">
         <source type="image/webp" srcset="/assets/images/joy-cafe-melbourn-interior-768.webp 768w, /assets/images/joy-cafe-melbourn-interior-1024.webp 1024w, /assets/images/joy-cafe-melbourn-interior-1440.webp 1440w, /assets/images/joy-cafe-melbourn-interior-1920.webp 1920w" sizes="100vw">
         <img src="/assets/images/joy-cafe-melbourn-interior.jpg" alt="The light-filled bar and coffee counter at Joy Cafe" width="1920" height="1278" fetchpriority="high" decoding="async">
@@ -87,7 +88,7 @@
       <a href="#visit"><small>Find us</small>28 Station Road, Melbourn</a>
       <span><small>Open</small>Wednesday to Saturday</span>
       <a href="tel:01763230140"><small>Call</small>01763 230140</a>
-      <a href="#book"><small>Plan a visit</small><span class="quick-info-action">Book a Table <i aria-hidden="true">→</i></span></a>
+      <a href="#book"><small>Plan a visit</small><span class="quick-info-action">Book a Table <svg class="link-arrow link-arrow-right" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h14M11 4l6 6-6 6"></path></svg></span></a>
     </div>
 
     <section class="booking section" id="book" aria-labelledby="booking-title">
@@ -104,7 +105,7 @@
         <div class="select-wrap"><select id="booking-service" name="service">{{SERVICE_OPTIONS}}</select></div>
         <label for="booking-date">Date</label>
         <input id="booking-date" name="date" type="date" required>
-        <button class="button" type="submit"><span class="button-label">Find a table</span><span aria-hidden="true">↗</span></button>
+        <button class="button" type="submit"><span class="button-label">Find a table</span><svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></button>
         <p id="booking-status" class="booking-status" aria-live="polite"></p>
       </form>
     </section>
@@ -148,7 +149,7 @@
     </section>
 
     <section class="menu-section section" id="day-menu" aria-labelledby="day-menu-title">
-      <div class="menu-jump"><span aria-current="true">Brunch / Lunch</span><a href="#evening-menu">Evening Menu ↓</a></div>
+      <div class="menu-jump"><span aria-current="true">Brunch / Lunch</span><a href="#evening-menu">Evening Menu <svg class="link-arrow link-arrow-down" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 3v14M4 11l6 6 6-6"></path></svg></a></div>
       <div class="menu-heading" data-reveal>
         <p class="eyebrow">From the kitchen</p>
         <h2 id="day-menu-title">{{DAY_MENU_TITLE}}</h2>
@@ -157,7 +158,7 @@
       </div>
       <div class="menu-grid">{{DAY_MENU_ITEMS}}</div>
       <p class="allergy-note">{{DAY_ALLERGY_NOTE}}</p>
-      <div class="menu-actions"><a class="button" href="#book">Book a Table</a><a class="text-link" href="#evening-menu">Jump to Evening Menu ↓</a></div>
+      <div class="menu-actions"><a class="button" href="#book">Book a Table</a><a class="text-link" href="#evening-menu">Jump to Evening Menu <svg class="link-arrow link-arrow-down" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 3v14M4 11l6 6 6-6"></path></svg></a></div>
     </section>
 
     <section class="night-intro" id="night" aria-labelledby="night-title" data-theme-zone="night">
@@ -175,7 +176,7 @@
     </section>
 
     <section class="menu-section evening-menu section" id="evening-menu" aria-labelledby="evening-menu-title" data-theme-zone="night">
-      <div class="menu-jump"><a href="#day-menu">↑ Brunch / Lunch</a><span aria-current="true">Evening Menu</span></div>
+      <div class="menu-jump"><a href="#day-menu"><svg class="link-arrow link-arrow-up" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 17V3M4 9l6-6 6 6"></path></svg> Brunch / Lunch</a><span aria-current="true">Evening Menu</span></div>
       <div class="menu-heading" data-reveal>
         <p class="eyebrow">For slower evenings</p>
         <h2 id="evening-menu-title">{{EVENING_MENU_TITLE}}</h2>
@@ -186,7 +187,7 @@
       <p class="menu-note">{{EVENING_ADDITIONAL_NOTE}}</p>
       <p class="allergy-note">{{EVENING_ALLERGY_NOTE}}</p>
       <div class="wine-note"><p class="eyebrow">Wine list</p><h3>Ask us what's open.</h3><p>Our wine list is available to view in the cafe. Ask us what's open by the glass, or come and discover something new.</p></div>
-      <div class="menu-actions"><a class="button" href="#book">Book a Table</a><a class="text-link" href="#day-menu">↑ Back to Brunch / Lunch</a></div>
+      <div class="menu-actions"><a class="button" href="#book">Book a Table</a><a class="text-link" href="#day-menu"><svg class="link-arrow link-arrow-up" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 17V3M4 9l6-6 6 6"></path></svg> Back to Brunch / Lunch</a></div>
     </section>
 
     <section class="coffee section" id="coffee" aria-labelledby="coffee-title" data-theme-zone="night">
@@ -225,7 +226,7 @@
         <h2 id="visit-title">Come and find us.</h2>
         <div class="visit-columns">
           <address><strong>Joy Cafe & Wine Bar</strong><br>28 Station Road<br>Melbourn<br>Royston<br>SG8 6DX</address>
-          <div class="contact-links"><a href="tel:01763230140">01763 230140</a><a href="mailto:info@joycafe28.com">info@joycafe28.com</a><a href="https://www.instagram.com/joycafe.28" target="_blank" rel="noopener noreferrer">@joycafe.28 ↗</a></div>
+          <div class="contact-links"><a href="tel:01763230140">01763 230140</a><a href="mailto:info@joycafe28.com">info@joycafe28.com</a><a href="https://www.instagram.com/joycafe.28" target="_blank" rel="noopener noreferrer">@joycafe.28 <svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></a></div>
         </div>
         <div class="hours" aria-label="Opening hours">{{OPENING_HOURS}}</div>
         <div class="map-card" id="map-card" data-lat="52.0846" data-lon="0.0147">
@@ -233,7 +234,7 @@
             <source type="image/webp" srcset="/assets/images/joy-cafe-exterior-sign-480.webp 480w, /assets/images/joy-cafe-exterior-sign-768.webp 768w" sizes="(max-width: 800px) 92vw, 38vw">
             <img src="/assets/images/joy-cafe-exterior-sign.jpg" alt="Joy Cafe & Wine Bar sign outside 28 Station Road" width="1920" height="1278" loading="lazy" decoding="async">
           </picture>
-          <div class="map-actions"><button class="button button-light" id="show-map" type="button">Show Map</button><a class="button button-ghost-light" href="{{DIRECTIONS_URL}}" target="_blank" rel="noopener noreferrer">Get Directions ↗</a></div>
+          <div class="map-actions"><button class="button button-light" id="show-map" type="button">Show Map</button><a class="button button-ghost-light" href="{{DIRECTIONS_URL}}" target="_blank" rel="noopener noreferrer">Get Directions <svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></a></div>
         </div>
       </div>
     </section>

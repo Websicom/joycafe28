@@ -44,7 +44,7 @@ export async function initBooking() {
   const showError = () => {
     if (!status) return;
     status.classList.add('is-error');
-    status.innerHTML = `We couldn't connect to SumUp just now. <a href="${config.fallbackUrl}">Open the booking page instead ↗</a>`;
+    status.innerHTML = `We couldn't connect to SumUp just now. <a href="${config.fallbackUrl}">Open the booking page instead <svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></a>`;
   };
 
   form.addEventListener('submit', async (event) => {
