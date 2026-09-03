@@ -22,18 +22,18 @@
   <meta name="twitter:image" content="https://joycafe28.com/assets/brand/joy-open-graph-1200x630.png">
   <meta name="theme-color" content="#f8f4ec">
   <link rel="icon" href="/assets/brand/joy-favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/assets/brand/joy-favicon-512.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-1440.webp" imagesrcset="/assets/images/joy-cafe-melbourn-interior-768.webp 768w, /assets/images/joy-cafe-melbourn-interior-1024.webp 1024w, /assets/images/joy-cafe-melbourn-interior-1440.webp 1440w, /assets/images/joy-cafe-melbourn-interior-1920.webp 1920w" imagesizes="100vw" type="image/webp">
-  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/images/joy-cafe-melbourn-interior-1440.webp" imagesrcset="/assets/images/joy-cafe-melbourn-interior-768.webp 768w, /assets/images/joy-cafe-melbourn-interior-1024.webp 1024w, /assets/images/joy-cafe-melbourn-interior-1440.webp 1440w, /assets/images/joy-cafe-melbourn-interior-1920.webp 1920w" imagesizes="100vw" type="image/webp" media="(min-width: 641px)" fetchpriority="high">
+  <style>{{INLINE_CSS}}</style>
   <script type="application/ld+json">{{LOCAL_BUSINESS_JSONLD}}</script>
   <script type="application/ld+json">{{FAQ_JSONLD}}</script>
   <script type="module" src="/assets/js/main.js"></script>
 </head>
 <body data-theme="day">
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="announcement" id="announcement" hidden aria-live="polite"></div>
+  <div class="announcement" id="announcement" aria-live="polite"><span>Joy Cafe opens Wednesday 9 September. Bookings are now open.</span><a href="#book">Book a table</a></div>
 
   <header class="site-header" id="site-header">
     <a class="brand" href="#top" aria-label="Joy Cafe & Wine Bar home">
@@ -52,8 +52,7 @@
       <a href="#visit">Visit</a>
       <a href="#faq">FAQs</a>
       <div class="theme-control">
-        <button id="theme-mode" type="button" data-mode="auto" aria-label="Theme: automatic. Activate for day mode" title="Theme: automatic">
-          <svg class="theme-icon theme-icon-auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 4a8 8 0 0 1 0 16Z"></path></svg>
+        <button id="theme-mode" type="button" data-mode="day" aria-label="Light theme active. Switch to dark theme" title="Switch to dark theme">
           <svg class="theme-icon theme-icon-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
           <svg class="theme-icon theme-icon-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8 8 0 0 1 8.6 4 8 8 0 1 0 20 15.4Z"></path></svg>
         </button>
@@ -65,13 +64,14 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <picture class="hero-media">
+        <source media="(max-width: 640px)" type="image/webp" srcset="/assets/images/joy-cafe-melbourn-interior-mobile.webp">
         <source type="image/webp" srcset="/assets/images/joy-cafe-melbourn-interior-768.webp 768w, /assets/images/joy-cafe-melbourn-interior-1024.webp 1024w, /assets/images/joy-cafe-melbourn-interior-1440.webp 1440w, /assets/images/joy-cafe-melbourn-interior-1920.webp 1920w" sizes="100vw">
         <img src="/assets/images/joy-cafe-melbourn-interior.jpg" alt="The light-filled bar and coffee counter at Joy Cafe" width="1920" height="1278" fetchpriority="high" decoding="async">
       </picture>
       <div class="hero-shade"></div>
       <div class="hero-copy" data-reveal>
         <p class="eyebrow">Melbourn, Cambridgeshire</p>
-        <h1 id="hero-title">Joy Cafe<br>& Wine Bar</h1>
+        <h1 id="hero-title"><span>joy</span> <span>Cafe &amp;</span> <span>Wine Bar</span></h1>
         <p class="tagline">Healthy by day, naughty by night.</p>
         <p class="hero-intro">Seasonal brunch and lunch, really good coffee, simple plates, cheese and wine in the heart of Melbourn.</p>
         <div class="hero-actions">
@@ -112,7 +112,7 @@
     <section class="day-intro section" id="day" aria-labelledby="day-title">
       <div class="split-copy" data-reveal="left">
         <p class="eyebrow">Healthy by day</p>
-        <h2 id="day-title">Good food.<br>Really good coffee.</h2>
+        <h2 id="day-title">Tasty food.<br>Really good coffee.</h2>
         <p>Nourishing seasonal food, light lunches and really good coffee. Simple plates made with ingredients we genuinely love to eat.</p>
         <ul class="word-list" aria-label="At Joy by day"><li>Coffee</li><li>Brunch</li><li>Lunch</li><li>Seasonal</li></ul>
       </div>
@@ -196,19 +196,19 @@
         <p>Coffee matters to us. At Joy we serve Wood Street Coffee, chosen because it fits our approach perfectly: thoughtful, uncomplicated and very good.</p>
       </div>
       <div class="coffee-images" data-reveal="right">
-        <picture class="coffee-pack">
-          <source type="image/webp" srcset="/assets/images/wood-street-coffee-joy-cafe-480.webp 480w, /assets/images/wood-street-coffee-joy-cafe-768.webp 768w, /assets/images/wood-street-coffee-joy-cafe-1024.webp 1024w" sizes="(max-width: 800px) 88vw, 42vw">
-          <img src="/assets/images/wood-street-coffee-joy-cafe.jpg" alt="Green bags of Wood Street Coffee at Joy" width="1920" height="1278" loading="lazy" decoding="async">
-        </picture>
-        <picture class="coffee-machine">
-          <source type="image/webp" srcset="/assets/images/joy-cafe-espresso-machine-480.webp 480w, /assets/images/joy-cafe-espresso-machine-768.webp 768w" sizes="(max-width: 800px) 46vw, 23vw">
+        <picture class="coffee-main">
+          <source type="image/webp" srcset="/assets/images/joy-cafe-espresso-machine-480.webp 480w, /assets/images/joy-cafe-espresso-machine-768.webp 768w, /assets/images/joy-cafe-espresso-machine-1024.webp 1024w" sizes="(max-width: 800px) 88vw, 42vw">
           <img src="/assets/images/joy-cafe-espresso-machine.jpg" alt="Joy's espresso machine and a freshly made coffee" width="1920" height="1440" loading="lazy" decoding="async">
+        </picture>
+        <picture class="coffee-inset">
+          <source type="image/webp" srcset="/assets/images/wood-street-coffee-joy-cafe-480.webp 480w, /assets/images/wood-street-coffee-joy-cafe-768.webp 768w" sizes="(max-width: 800px) 46vw, 23vw">
+          <img src="/assets/images/wood-street-coffee-joy-cafe.jpg" alt="Green bags of Wood Street Coffee at Joy" width="1920" height="1278" loading="lazy" decoding="async">
         </picture>
       </div>
     </section>
 
     <section class="reviews section" id="reviews" aria-labelledby="reviews-title" data-theme-zone="day">
-      <div class="section-heading" data-reveal><p class="eyebrow">A little local joy</p><h2 id="reviews-title">Good words,<br>kindly shared.</h2></div>
+      <div class="section-heading" data-reveal><p class="eyebrow">A little local joy</p><h2 id="reviews-title">Kind words,<br>lovingly shared.</h2></div>
       <div class="review-grid">{{TESTIMONIALS}}</div>
     </section>
 
@@ -254,7 +254,7 @@
   </main>
 
   <footer class="site-footer">
-    <div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"></div>
+    <div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820" loading="lazy" decoding="async"></div>
     <div><h2>Explore</h2><a href="#story">Our Story</a><a href="#day-menu">Brunch / Lunch Menu</a><a href="#evening-menu">Evening Menu</a><a href="#visit">Visit</a><a href="#faq">FAQs</a><a href="#book">Book a Table</a></div>
     <div><h2>Contact</h2><a href="mailto:info@joycafe28.com">info@joycafe28.com</a><a href="tel:01763230140">01763 230140</a><a href="https://www.instagram.com/joycafe.28" target="_blank" rel="noopener noreferrer">@joycafe.28</a><address>28 Station Road<br>Melbourn<br>Royston<br>SG8 6DX</address></div>
     <div><h2>Legal</h2><a href="/privacy-policy.html">Privacy Policy</a><a href="/cookie-policy.html">Cookie Policy</a><a href="/terms.html">Website Terms</a><p>Joy Cafe Ltd<br>Registered in England and Wales<br>Company No. 16966430</p></div>

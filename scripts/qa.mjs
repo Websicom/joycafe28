@@ -33,6 +33,12 @@ for (const match of homepage.matchAll(/<script type="application\/ld\+json">([\s
 assert((homepage.match(/<script type="application\/ld\+json">/g) || []).length === 2, 'index.html: expected business and FAQ JSON-LD');
 assert(!homepage.includes('<a href="#coffee">Coffee</a>'), 'index.html: coffee should not appear as a navigation link');
 assert(homepage.includes('id="theme-mode"') && !homepage.includes('id="theme-auto"'), 'index.html: expected the compact theme icon control');
+assert(homepage.includes('<style>@font-face') && !homepage.includes('<link rel="stylesheet" href="/assets/css/styles.css">'), 'index.html: homepage CSS should be inlined for first-paint performance');
+assert(!homepage.includes('data-mode="auto"') && !homepage.includes('theme-icon-auto'), 'index.html: theme control should offer light and dark modes only');
+assert(homepage.includes('<h1 id="hero-title"><span>joy</span> <span>Cafe &amp;</span> <span>Wine Bar</span></h1>'), 'index.html: hero heading should use the requested three-line wordmark');
+assert(homepage.includes('Tasty food.<br>Really good coffee.'), 'index.html: day heading should say Tasty food');
+assert(homepage.includes('Kind words,<br>lovingly shared.'), 'index.html: reviews heading should use the requested wording');
+assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee-inset"'), 'index.html: coffee images should use the main and inset composition');
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('class="quick-info-action"'), 'index.html: plan-a-visit action should keep its arrow inline');
 assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');

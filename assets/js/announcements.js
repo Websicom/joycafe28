@@ -9,7 +9,12 @@ export async function initAnnouncements() {
     const response = await fetch('/data/announcements.json');
     if (!response.ok) return;
     const active = getActiveAnnouncement(await response.json());
-    if (!active) return;
+    if (!active) {
+      bar.hidden = true;
+      bar.replaceChildren();
+      return;
+    }
+    bar.replaceChildren();
     const message = document.createElement('span');
     message.textContent = active.message;
     bar.append(message);

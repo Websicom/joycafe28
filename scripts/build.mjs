@@ -60,7 +60,9 @@ const businessSchema = {
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((item) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })) };
 
 let homepage = await readFile(path.join(root, 'src', 'index.template.html'), 'utf8');
+const inlineCss = await readFile(path.join(root, 'assets', 'css', 'styles.css'), 'utf8');
 const replacements = {
+  INLINE_CSS: inlineCss,
   LOCAL_BUSINESS_JSONLD: safeJson(businessSchema), FAQ_JSONLD: safeJson(faqSchema),
   PARTY_OPTIONS: booking.partySizes.map((size) => `<option value="${size}">${size} ${size === 1 ? 'person' : 'people'}</option>`).join(''),
   SERVICE_OPTIONS: booking.services.map((service) => `<option value="${escapeHtml(service.id)}">${escapeHtml(service.label)}</option>`).join(''),

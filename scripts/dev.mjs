@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createGzip } from 'node:zlib';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -10,8 +11,17 @@ const server = http.createServer((request, response) => {
   let filename = path.resolve(root, `.${pathname === '/' ? '/index.html' : pathname}`);
   if (!filename.startsWith(root) || !existsSync(filename) || statSync(filename).isDirectory()) filename = path.join(root, '404.html');
   const isNotFound = filename.endsWith('404.html') && pathname !== '/404.html';
-  response.writeHead(isNotFound ? 404 : 200, { 'Content-Type': types[path.extname(filename)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
-  createReadStream(filename).pipe(response);
+  const extension = path.extname(filename);
+  const shouldCompress = /gzip/.test(request.headers['accept-encoding'] || '') && ['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg', '.webmanifest'].includes(extension);
+  const headers = { 'Content-Type': types[extension] || 'application/octet-stream', 'Cache-Control': 'no-store' };
+  if (shouldCompress) {
+    headers['Content-Encoding'] = 'gzip';
+    headers.Vary = 'Accept-Encoding';
+  }
+  response.writeHead(isNotFound ? 404 : 200, headers);
+  const file = createReadStream(filename);
+  if (shouldCompress) file.pipe(createGzip()).pipe(response);
+  else file.pipe(response);
 });
 
 server.listen(5173, '127.0.0.1', () => console.log('Local: http://127.0.0.1:5173/'));

@@ -26,6 +26,11 @@ for (const [filename, slug] of Object.entries(images)) {
   }
   await sharp(source).rotate().resize({ width: Math.min(1920, metadata.width), withoutEnlargement: true }).jpeg({ quality: 82, progressive: true }).toFile(path.join(output, `${slug}.jpg`));
 }
+await sharp(path.join(input, 'image00003.jpeg'))
+  .rotate()
+  .resize({ width: 480, height: 748, fit: 'cover', position: 'centre' })
+  .webp({ quality: 40, effort: 6 })
+  .toFile(path.join(output, 'joy-cafe-melbourn-interior-mobile.webp'));
 await copyFile(path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-open-graph-1200x630.png'), path.join(root, 'assets', 'brand', 'joy-open-graph-1200x630.png'));
 await copyFile(path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-favicon-512.png'), path.join(root, 'assets', 'brand', 'joy-favicon-512.png'));
 await copyFile(path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'favicon.ico'), path.join(root, 'favicon.ico'));
