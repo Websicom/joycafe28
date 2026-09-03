@@ -5,6 +5,7 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 const input = path.join(root, 'Media and Files', 'images');
 const output = path.join(root, 'assets', 'images');
+const documentsOutput = path.join(root, 'assets', 'documents');
 const widths = [480, 768, 1024, 1440, 1920];
 const images = {
   'image00003.jpeg': 'joy-cafe-melbourn-interior',
@@ -18,6 +19,7 @@ const images = {
 };
 
 await mkdir(output, { recursive: true });
+await mkdir(documentsOutput, { recursive: true });
 for (const [filename, slug] of Object.entries(images)) {
   const source = path.join(input, filename);
   const metadata = await sharp(source).metadata();
@@ -37,6 +39,9 @@ await sharp(path.join(input, 'image00003.jpeg'))
   .avif({ quality: 38, effort: 7 })
   .toFile(path.join(output, 'joy-cafe-melbourn-interior-mobile.avif'));
 await copyFile(path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-open-graph-1200x630.png'), path.join(root, 'assets', 'brand', 'joy-open-graph-1200x630.png'));
+await copyFile(path.join(root, 'Media and Files', 'logo', 'Joy Cafe Main Logo.svg'), path.join(root, 'assets', 'brand', 'joy-main-logo.svg'));
+await copyFile(path.join(root, 'Media and Files', 'images', 'marble bg.webp'), path.join(output, 'marble-bg.webp'));
+await copyFile(path.join(root, 'Media and Files', 'Joy Wine List.pdf'), path.join(documentsOutput, 'joy-wine-list.pdf'));
 const faviconSource = path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-favicon-512.png');
 await copyFile(faviconSource, path.join(root, 'assets', 'brand', 'joy-favicon-512.png'));
 

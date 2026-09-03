@@ -43,15 +43,19 @@ assert(homepage.includes('Tasty food.<br>Really good coffee.'), 'index.html: day
 assert(!homepage.includes('id="reviews"') && !homepage.includes('{{TESTIMONIALS}}'), 'index.html: testimonials section should be removed');
 assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee-inset"'), 'index.html: coffee images should use the main and inset composition');
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
-assert(homepage.includes('<small>Email us</small>info@joycafe28.com'), 'index.html: quick information should include the email contact');
+assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
 assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');
 assert(homepage.includes('class="announcement" id="announcement" aria-live="polite"><span>') && !homepage.includes('id="announcement" aria-live="polite"><span>Joy Cafe opens Wednesday 9 September. Bookings are now open.</span><a'), 'index.html: announcement should not include a booking link');
 assert(!homepage.includes('↗') && homepage.includes('class="link-arrow"'), 'index.html: arrows should use Safari-safe line SVGs');
 assert(homepage.includes('joy-cafe-melbourn-interior-mobile.avif'), 'index.html: mobile hero should use the optimized AVIF source');
+assert(homepage.includes('/assets/brand/joy-main-logo.svg') && homepage.includes('/assets/documents/joy-wine-list.pdf'), 'index.html: updated logo and wine list should be linked');
+assert(homepage.includes('/assets/images/marble-bg.webp'), 'index.html: marble texture should be included in the requested sections');
 const favicon = await readFile(path.join(root, 'favicon.ico'));
 assert(favicon.length < 10_000 && favicon.readUInt16LE(2) === 1 && favicon.readUInt16LE(4) === 3, 'favicon.ico: expected an optimized three-size icon');
+const wineList = await readFile(path.join(root, 'assets', 'documents', 'joy-wine-list.pdf'));
+assert(wineList.subarray(0, 5).toString() === '%PDF-' && wineList.length > 1000, 'wine list: expected a valid linked PDF asset');
 assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');
 
 const bookingWeek = getBookingWeek('2026-09-09');
