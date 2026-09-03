@@ -23,6 +23,7 @@ for (const page of pages) {
 }
 
 const homepage = await readFile(path.join(root, 'index.html'), 'utf8');
+const themeScript = await readFile(path.join(root, 'assets', 'js', 'theme.js'), 'utf8');
 for (const match of homepage.matchAll(/<img\s+([^>]+)>/g)) {
   assert(/\salt="[^"]*"/.test(` ${match[1]}`), `index.html: image missing alt text`);
   assert(/\swidth="\d+"/.test(` ${match[1]}`) && /\sheight="\d+"/.test(` ${match[1]}`), `index.html: image missing width or height`);
@@ -35,7 +36,9 @@ assert(!homepage.includes('<a href="#coffee">Coffee</a>'), 'index.html: coffee s
 assert(homepage.includes('id="theme-mode"') && !homepage.includes('id="theme-auto"'), 'index.html: expected the compact theme icon control');
 assert(homepage.includes('<style>@font-face') && !homepage.includes('<link rel="stylesheet" href="/assets/css/styles.css">'), 'index.html: homepage CSS should be inlined for first-paint performance');
 assert(!homepage.includes('data-mode="auto"') && !homepage.includes('theme-icon-auto'), 'index.html: theme control should offer light and dark modes only');
-assert(homepage.includes('<h1 id="hero-title"><span>joy</span> <span>Cafe &amp;</span> <span>Wine Bar</span></h1>'), 'index.html: hero heading should use the requested three-line wordmark');
+assert(homepage.includes('id="night"') && homepage.includes('id="reviews"'), 'index.html: automatic theme needs its night and day section markers');
+assert(themeScript.includes('override || getScrollTheme()') && themeScript.includes("window.addEventListener('scroll'"), 'theme.js: automatic scroll theme should remain the default');
+assert(homepage.includes('<h1 id="hero-title"><span>joy Cafe &amp;</span> <span>Wine Bar</span></h1>'), 'index.html: hero heading should use the requested two-line wordmark');
 assert(homepage.includes('Tasty food.<br>Really good coffee.'), 'index.html: day heading should say Tasty food');
 assert(homepage.includes('Kind words,<br>lovingly shared.'), 'index.html: reviews heading should use the requested wording');
 assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee-inset"'), 'index.html: coffee images should use the main and inset composition');
