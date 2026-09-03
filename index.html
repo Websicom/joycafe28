@@ -49,20 +49,15 @@
           <a href="#evening-menu">Evening Menu</a>
         </div>
       </div>
-      <a href="#coffee">Coffee</a>
       <a href="#visit">Visit</a>
       <a href="#faq">FAQs</a>
-      <fieldset class="theme-control" aria-label="Choose day, night, or automatic theme">
-        <legend class="sr-only">Theme</legend>
-        <span aria-hidden="true">Day</span>
-        <label class="theme-toggle">
-          <span class="sr-only">Use night theme</span>
-          <input id="theme-switch" type="checkbox" role="switch" aria-label="Use night theme">
-          <span class="theme-track" aria-hidden="true"><i></i></span>
-        </label>
-        <span aria-hidden="true">Night</span>
-        <button id="theme-auto" type="button" aria-pressed="true" title="Follow page automatically">Auto</button>
-      </fieldset>
+      <div class="theme-control">
+        <button id="theme-mode" type="button" data-mode="auto" aria-label="Theme: automatic. Activate for day mode" title="Theme: automatic">
+          <svg class="theme-icon theme-icon-auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 4a8 8 0 0 1 0 16Z"></path></svg>
+          <svg class="theme-icon theme-icon-day" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+          <svg class="theme-icon theme-icon-night" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8 8 0 0 1 8.6 4 8 8 0 1 0 20 15.4Z"></path></svg>
+        </button>
+      </div>
     </nav>
     <a class="button header-book" href="#book">Book a Table</a>
   </header>
@@ -107,8 +102,10 @@
         <div class="select-wrap"><select id="party-size" name="partySize"><option value="1">1 person</option><option value="2">2 people</option><option value="3">3 people</option><option value="4">4 people</option></select></div>
         <label for="booking-service">Daytime or evening</label>
         <div class="select-wrap"><select id="booking-service" name="service"><option value="brunch-lunch">Brunch/Lunch</option><option value="evening">Evening Menu</option></select></div>
-        <button class="button" type="submit">Continue to Booking <span aria-hidden="true">↗</span></button>
-        <p id="booking-status" class="sr-only" aria-live="polite"></p>
+        <label for="booking-date">Date</label>
+        <input id="booking-date" name="date" type="date" required>
+        <button class="button" type="submit"><span class="button-label">Find a table</span><span aria-hidden="true">↗</span></button>
+        <p id="booking-status" class="booking-status" aria-live="polite"></p>
       </form>
     </section>
 
@@ -374,16 +371,18 @@
     </section>
 
     <section class="final-cta section" aria-labelledby="final-title">
-      <p class="eyebrow">Healthy by day. Naughty by night.</p>
-      <h2 id="final-title">Come find<br>a little joy.</h2>
-      <p>Coffee, lunch, wine, cheese and good company in the heart of Melbourn.</p>
-      <div><a class="button" href="#book">Book a Table</a><a class="button button-ghost" href="mailto:info@joycafe28.com">Get in Touch</a></div>
+      <div class="final-cta-inner">
+        <p class="eyebrow">Healthy by day. Naughty by night.</p>
+        <h2 id="final-title">Come find<br>a little joy.</h2>
+        <p>Coffee, lunch, wine, cheese and good company in the heart of Melbourn.</p>
+        <div><a class="button" href="#book">Book a Table</a><a class="button button-ghost" href="mailto:info@joycafe28.com">Get in Touch</a></div>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>Healthy by day,<br>naughty by night.</p></div>
-    <div><h2>Explore</h2><a href="#story">Our Story</a><a href="#day-menu">Brunch / Lunch Menu</a><a href="#evening-menu">Evening Menu</a><a href="#coffee">Coffee</a><a href="#visit">Visit</a><a href="#faq">FAQs</a><a href="#book">Book a Table</a></div>
+    <div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"></div>
+    <div><h2>Explore</h2><a href="#story">Our Story</a><a href="#day-menu">Brunch / Lunch Menu</a><a href="#evening-menu">Evening Menu</a><a href="#visit">Visit</a><a href="#faq">FAQs</a><a href="#book">Book a Table</a></div>
     <div><h2>Contact</h2><a href="mailto:info@joycafe28.com">info@joycafe28.com</a><a href="tel:01763230140">01763 230140</a><a href="https://www.instagram.com/joycafe.28" target="_blank" rel="noopener noreferrer">@joycafe.28</a><address>28 Station Road<br>Melbourn<br>Royston<br>SG8 6DX</address></div>
     <div><h2>Legal</h2><a href="/privacy-policy.html">Privacy Policy</a><a href="/cookie-policy.html">Cookie Policy</a><a href="/terms.html">Website Terms</a><p>Joy Cafe Ltd<br>Registered in England and Wales<br>Company No. 16966430</p></div>
     <div class="footer-bottom"><p>© 2026 Joy Cafe Ltd</p><p>Registered office: 28 Station Road, Melbourn, Royston, England, SG8 6DX</p><p>Website designed by <a href="https://websi.com/" target="_blank" rel="noopener noreferrer">Websi</a></p></div>

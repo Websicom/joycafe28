@@ -1,6 +1,7 @@
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { getActiveAnnouncement } from '../assets/js/announcements.js';
+import { getBookingWeek } from '../assets/js/booking.js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const pages = ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
@@ -30,6 +31,13 @@ for (const match of homepage.matchAll(/<script type="application\/ld\+json">([\s
   try { JSON.parse(match[1]); } catch (error) { errors.push(`index.html: invalid JSON-LD (${error.message})`); }
 }
 assert((homepage.match(/<script type="application\/ld\+json">/g) || []).length === 2, 'index.html: expected business and FAQ JSON-LD');
+assert(!homepage.includes('<a href="#coffee">Coffee</a>'), 'index.html: coffee should not appear as a navigation link');
+assert(homepage.includes('id="theme-mode"') && !homepage.includes('id="theme-auto"'), 'index.html: expected the compact theme icon control');
+assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
+assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');
+
+const bookingWeek = getBookingWeek('2026-09-09');
+assert(bookingWeek.startDate === '2026-09-07' && bookingWeek.endDate === '2026-09-13', 'booking date should resolve to its surrounding Monday and Sunday');
 
 const announcements = JSON.parse(await readFile(path.join(root, 'data', 'announcements.json'), 'utf8'));
 assert(getActiveAnnouncement(announcements, new Date('2026-09-09T22:00:00+01:00'))?.id === 'opening-2026', 'opening announcement should be active on 9 September');

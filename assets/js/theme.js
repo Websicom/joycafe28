@@ -2,25 +2,22 @@ const storageKey = 'joy-theme-override';
 
 export function initTheme() {
   const body = document.body;
-  const themeSwitch = document.querySelector('#theme-switch');
-  const autoButton = document.querySelector('#theme-auto');
+  const modeButton = document.querySelector('#theme-mode');
   const nightZone = document.querySelector('#night');
   const dayZone = document.querySelector('#reviews');
-  let override = sessionStorage.getItem(storageKey);
+  let mode = sessionStorage.getItem(storageKey) || 'auto';
+  if (!['auto', 'day', 'night'].includes(mode)) mode = 'auto';
   let autoTheme = getScrollTheme();
 
-  const apply = (theme, automatic = false) => {
+  const apply = (theme) => {
     body.dataset.theme = theme;
-    themeSwitch.checked = theme === 'night';
-    themeSwitch.setAttribute('aria-checked', String(theme === 'night'));
-    autoButton.setAttribute('aria-pressed', String(automatic));
+    if (modeButton) {
+      const nextMode = mode === 'auto' ? 'day' : mode === 'day' ? 'night' : 'auto';
+      modeButton.dataset.mode = mode;
+      modeButton.title = `Theme: ${mode === 'auto' ? 'automatic' : mode}`;
+      modeButton.setAttribute('aria-label', `Theme: ${mode === 'auto' ? 'automatic' : mode}. Activate for ${nextMode} mode`);
+    }
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'night' ? '#1b1815' : '#f8f4ec');
-  };
-  const useAuto = () => {
-    override = null;
-    sessionStorage.removeItem(storageKey);
-    autoTheme = getScrollTheme();
-    apply(autoTheme, true);
   };
 
   function getScrollTheme() {
@@ -31,24 +28,25 @@ export function initTheme() {
     return nightTop <= marker && dayTop > marker ? 'night' : 'day';
   }
 
-  themeSwitch?.addEventListener('change', () => {
-    override = themeSwitch.checked ? 'night' : 'day';
-    sessionStorage.setItem(storageKey, override);
-    apply(override, false);
+  modeButton?.addEventListener('click', () => {
+    mode = mode === 'auto' ? 'day' : mode === 'day' ? 'night' : 'auto';
+    if (mode === 'auto') sessionStorage.removeItem(storageKey);
+    else sessionStorage.setItem(storageKey, mode);
+    autoTheme = getScrollTheme();
+    apply(mode === 'auto' ? autoTheme : mode);
   });
-  autoButton?.addEventListener('click', useAuto);
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(() => {
       autoTheme = getScrollTheme();
-      if (!override) apply(autoTheme, true);
+      if (mode === 'auto') apply(autoTheme);
     }, { rootMargin: '-42% 0px -42% 0px', threshold: 0 });
     if (nightZone) observer.observe(nightZone);
     if (dayZone) observer.observe(dayZone);
   }
-  apply(override || autoTheme, !override);
+  apply(mode === 'auto' ? autoTheme : mode);
   window.addEventListener('pageshow', () => {
     autoTheme = getScrollTheme();
-    if (!override) apply(autoTheme, true);
+    if (mode === 'auto') apply(autoTheme);
   });
 }
