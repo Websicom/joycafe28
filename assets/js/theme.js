@@ -4,7 +4,7 @@ export function initTheme() {
   const body = document.body;
   const modeButton = document.querySelector('#theme-mode');
   const nightZone = document.querySelector('#night');
-  const dayZone = document.querySelector('#reviews');
+  const dayZone = document.querySelector('#visit');
   let mode = sessionStorage.getItem(storageKey) || 'day';
   if (!['day', 'night'].includes(mode)) mode = 'day';
 

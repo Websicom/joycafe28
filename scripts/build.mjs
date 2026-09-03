@@ -16,8 +16,8 @@ const to24Hour = (value) => {
   return `${String(hour).padStart(2, '0')}:${match[2] || '00'}`;
 };
 
-const [site, menu, booking, faqs, testimonials, announcements] = await Promise.all([
-  readJson('site.json'), readJson('menu.json'), readJson('booking.json'), readJson('faqs.json'), readJson('testimonials.json'), readJson('announcements.json')
+const [site, menu, booking, faqs, announcements] = await Promise.all([
+  readJson('site.json'), readJson('menu.json'), readJson('booking.json'), readJson('faqs.json'), readJson('announcements.json')
 ]);
 
 assert(site.name && site.domain && site.email && site.address?.postcode, 'site.json is missing required business information.');
@@ -25,7 +25,6 @@ assert(Array.isArray(menu.daytime?.items) && menu.daytime.items.length, 'menu.js
 assert(Array.isArray(menu.evening?.items) && menu.evening.items.length, 'menu.json needs evening menu items.');
 assert(Array.isArray(booking.partySizes) && booking.identifier && booking.apiBaseUrl?.startsWith('https://') && booking.fallbackUrl?.startsWith('https://'), 'booking.json is invalid.');
 assert(Array.isArray(faqs) && faqs.every((item) => item.question && item.answer), 'faqs.json contains an invalid FAQ.');
-assert(Array.isArray(testimonials) && testimonials.every((item) => item.quote && item.name), 'testimonials.json contains an invalid item.');
 assert(Array.isArray(announcements), 'announcements.json must be an array.');
 
 const renderMenu = (items) => items.map((item) => `<article class="menu-item">
@@ -39,7 +38,6 @@ const renderFaqs = () => faqs.map((item, index) => `<article class="faq-item">
   <div class="faq-answer" id="faq-answer-${index + 1}" role="region" aria-hidden="true" aria-labelledby="faq-question-${index + 1}"><div><p>${escapeHtml(item.answer)}</p></div></div>
 </article>`.replace('class="faq-question"', `class="faq-question" id="faq-question-${index + 1}"`)).join('\n');
 
-const renderTestimonials = () => testimonials.map((item) => `<figure class="review"><blockquote>“${escapeHtml(item.quote)}”</blockquote><figcaption><cite>${escapeHtml(item.name)}</cite></figcaption></figure>`).join('\n');
 const renderHours = () => site.hours.map((item) => `<div class="hours-row"><span>${escapeHtml(item.day)}</span><span>${item.times.map((time) => `<em>${escapeHtml(time)}</em>`).join('')}</span></div>`).join('\n');
 
 const businessSchema = {
@@ -68,7 +66,7 @@ const replacements = {
   SERVICE_OPTIONS: booking.services.map((service) => `<option value="${escapeHtml(service.id)}">${escapeHtml(service.label)}</option>`).join(''),
   DAY_MENU_TITLE: escapeHtml(menu.daytime.title), DAY_MENU_AVAILABILITY: escapeHtml(menu.daytime.availability), DAY_MENU_INTRO: escapeHtml(menu.daytime.intro), DAY_MENU_ITEMS: renderMenu(menu.daytime.items), DAY_ALLERGY_NOTE: escapeHtml(menu.daytime.allergyNote),
   EVENING_MENU_TITLE: escapeHtml(menu.evening.title), EVENING_MENU_AVAILABILITY: escapeHtml(menu.evening.availability), EVENING_MENU_INTRO: escapeHtml(menu.evening.intro), EVENING_MENU_ITEMS: renderMenu(menu.evening.items), EVENING_ADDITIONAL_NOTE: escapeHtml(menu.evening.additionalNote), EVENING_ALLERGY_NOTE: escapeHtml(menu.evening.allergyNote),
-  TESTIMONIALS: renderTestimonials(), OPENING_HOURS: renderHours(), FAQ_ITEMS: renderFaqs(), DIRECTIONS_URL: escapeHtml(site.map.directionsUrl)
+  OPENING_HOURS: renderHours(), FAQ_ITEMS: renderFaqs(), DIRECTIONS_URL: escapeHtml(site.map.directionsUrl)
 };
 for (const [key, value] of Object.entries(replacements)) homepage = homepage.replaceAll(`{{${key}}}`, value);
 assert(!homepage.includes('{{'), 'an unresolved homepage template token remains.');
