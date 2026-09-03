@@ -33,6 +33,8 @@ for (const match of homepage.matchAll(/<script type="application\/ld\+json">([\s
 assert((homepage.match(/<script type="application\/ld\+json">/g) || []).length === 2, 'index.html: expected business and FAQ JSON-LD');
 assert(!homepage.includes('<a href="#coffee">Coffee</a>'), 'index.html: coffee should not appear as a navigation link');
 assert(homepage.includes('id="theme-mode"') && !homepage.includes('id="theme-auto"'), 'index.html: expected the compact theme icon control');
+assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
+assert(homepage.includes('class="quick-info-action"'), 'index.html: plan-a-visit action should keep its arrow inline');
 assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
 assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');
 

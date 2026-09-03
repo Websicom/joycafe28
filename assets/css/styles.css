@@ -82,3 +82,31 @@ body[data-theme="night"] .booking-form input[type="date"]{color-scheme:dark}
 
 @media(max-width:900px){.visit-media img{aspect-ratio:3/2}.review:nth-child(2){transform:none}}
 @media(max-width:640px){.theme-control{display:flex}.hero{min-height:620px}.image-frame img,.portrait-main img,.visit-media img{aspect-ratio:3/2}.night-intro{min-height:620px}.reviews{background-attachment:scroll}.review{min-height:250px}.booking-status{grid-column:1}}
+
+/* Final alignment and image-proportion corrections. */
+.nav-dropdown>button{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;line-height:1}
+.nav-chevron{display:block;width:6px;height:6px;margin-top:-3px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg);transform-origin:center}
+.quick-info-action{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;white-space:nowrap}
+.quick-info-action i{font-style:normal;line-height:1}
+
+.day-intro .image-frame picture,.story-images picture,.coffee-images picture{display:block}
+.day-intro .image-frame img,.story-images img,.coffee-images img{display:block;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto!important;object-fit:contain!important;transform:none!important}
+.day-intro .image-frame img,.portrait-main img,.coffee-pack img{aspect-ratio:1920/1278!important}
+.portrait-inset img{aspect-ratio:1278/1920!important}
+.coffee-machine img{aspect-ratio:1920/1440!important}
+.day-intro .image-frame{align-self:center;max-height:none}
+.story-images{align-self:center;padding:0 2.5rem 2.5rem 0}
+.portrait-main{display:block;width:100%}
+.portrait-inset{width:31%;right:0;bottom:0}
+.coffee-images{align-self:center;padding:0 0 2.5rem 3.5rem}
+.coffee-pack{display:block;width:100%}
+.coffee-machine{width:31%;left:0;bottom:0}
+
+.final-cta{display:flex!important;align-items:center;justify-content:center;text-align:center!important}
+.final-cta>.final-cta-inner{display:flex;flex-direction:column;align-items:center;width:min(760px,100%)!important;max-width:760px!important;margin:0 auto!important;text-align:center!important}
+.final-cta-inner>*{margin-left:auto!important;margin-right:auto!important;text-align:center!important}
+.final-cta-inner>h2{width:100%}
+.final-cta-inner>div{width:100%;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:900px){.nav-dropdown>button{justify-content:space-between}.day-intro .image-frame,.story-images,.coffee-images{max-width:720px}.story-images{padding-right:2rem}.coffee-images{padding-left:2rem}}
+@media(max-width:640px){.story-images,.coffee-images{padding-bottom:1.5rem}.portrait-inset,.coffee-machine{width:29%;border-width:5px}.final-cta-inner>div{flex-direction:column;align-items:stretch}.final-cta-inner>div .button{width:100%}}
