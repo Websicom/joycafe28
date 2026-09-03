@@ -52,6 +52,7 @@ assert(!homepage.includes('↗') && homepage.includes('class="link-arrow"'), 'in
 assert(homepage.includes('joy-cafe-melbourn-interior-mobile.avif'), 'index.html: mobile hero should use the optimized AVIF source');
 assert(homepage.includes('/assets/brand/joy-main-logo.svg') && homepage.includes('/assets/documents/joy-wine-list.pdf'), 'index.html: updated logo and wine list should be linked');
 assert(homepage.includes('/assets/images/marble-bg.webp'), 'index.html: marble texture should be included in the requested sections');
+assert(homepage.includes('rgba(248,244,236,.9)'), 'index.html: marble texture should remain subtle beneath the warm day background');
 const favicon = await readFile(path.join(root, 'favicon.ico'));
 assert(favicon.length < 10_000 && favicon.readUInt16LE(2) === 1 && favicon.readUInt16LE(4) === 3, 'favicon.ico: expected an optimized three-size icon');
 const wineList = await readFile(path.join(root, 'assets', 'documents', 'joy-wine-list.pdf'));
