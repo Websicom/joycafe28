@@ -40,7 +40,7 @@ assert(homepage.includes('id="night"') && homepage.includes('id="visit"'), 'inde
 assert(themeScript.includes("mode === 'night' ? 'night' : getScrollTheme()") && themeScript.includes("if (mode === 'day')") && themeScript.includes("window.addEventListener('scroll'"), 'theme.js: day mode should retain automatic night sections while dark mode remains global');
 assert(homepage.includes('<h1 id="hero-title"><span class="joy-word">joy</span><span class="hero-descriptor">Cafe &amp; Wine Bar</span></h1>'), 'index.html: hero heading should give joy its own larger line');
 assert(homepage.includes('Nourishing food · simple plates · coffee · cheese · wine · good vibes'), 'index.html: hero introduction should use the client copy');
-assert(homepage.includes('nourishing food.<br>Really good coffee.') && !homepage.includes('<li>Seasonal</li>'), 'index.html: day section should use the nourishing food heading without the seasonal tag');
+assert(homepage.includes('Nourishing food.<br>Really good coffee.') && !homepage.includes('<li>Seasonal</li>'), 'index.html: day section should use the capitalised Nourishing food heading without the seasonal tag');
 assert(!homepage.includes('Your table at Joy') && homepage.includes('If you’d like to book a table at Joy, please fill in the form below.'), 'index.html: booking introduction should use the requested copy without its old eyebrow');
 assert(homepage.includes('our family-run women’s fashion, gifts and beauty therapy destination next door.'), 'index.html: ESSE note should use the shortened family-run description');
 assert(homepage.includes('<h2 id="night-title">Thursday evenings at joy.</h2>') && homepage.includes('<li>Good food</li><li>Good wine</li><li>Good company</li>'), 'index.html: evening introduction should use the new Thursday heading and three themes');
@@ -61,7 +61,8 @@ assert(homepage.includes('joy-cafe-melbourn-interior-mobile.avif'), 'index.html:
 assert(homepage.includes('/assets/brand/joy-main-logo.svg') && homepage.includes('/assets/documents/joy-wine-list.pdf'), 'index.html: updated logo and wine list should be linked');
 assert(homepage.includes('/assets/images/marble-bg.webp'), 'index.html: marble texture should be included in the requested sections');
 assert(homepage.includes('rgba(251,250,246,.9)'), 'index.html: marble texture should remain subtle beneath the light sage day background');
-assert(homepage.includes('--page-bg:#fbfaf6') && homepage.includes('--sage:#acb095') && homepage.includes('--page-bg:#c4b5aa'), 'index.html: requested light and putty night palettes should be inlined');
+assert(homepage.includes('--page-bg:#fbfaf6') && homepage.includes('--sage:#acb095') && homepage.includes('--page-bg:#4b413d') && homepage.includes('--text:#fffaf6'), 'index.html: requested light palette and white-text dark palette should be inlined');
+assert(homepage.includes('.announcement{') && homepage.includes('background:var(--button);color:#fff') && homepage.includes('border-top:1px solid var(--line)'), 'index.html: announcement should follow the CTA theme and quick information should have its top rule');
 assert(!homepage.includes('Morning light') && !homepage.includes('<figcaption>'), 'index.html: editorial image captions should be removed');
 assert(homepage.indexOf('class="portrait-main"') < homepage.indexOf('joy-cafe-story-main.jpg') && homepage.indexOf('class="portrait-inset"') < homepage.indexOf('steff-and-mike-at-joy-cafe.jpg'), 'index.html: story images should use the requested main and inset positions');
 assert(!homepage.includes('Can I see the wine list online?'), 'index.html: online wine list FAQ should be removed');
