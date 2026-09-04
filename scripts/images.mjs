@@ -12,6 +12,7 @@ const images = {
   'image00004.jpeg': 'joy-cafe-coffee-bar',
   'image00005.jpeg': 'joy-cafe-family',
   'image00006.jpeg': 'joy-cafe-espresso-machine',
+  'image00008.jpeg': 'joy-cafe-story-main',
   'image00009.jpeg': 'joy-cafe-exterior-sign',
   'image00010.jpeg': 'steff-and-mike-at-joy-cafe',
   'image00101.jpeg': 'wood-street-coffee-joy-cafe',

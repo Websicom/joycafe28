@@ -19,7 +19,7 @@
   },
   "evening": {
     "title": "Evening Menu",
-    "availability": "Thursday 6pm – 9pm & Friday 2pm – 6pm",
+    "availability": "Thursday 6pm – 9pm",
     "intro": "Our cheeses are carefully selected from award-winning Rennet & Rind. Our charcuterie comes from Sunday Charcuterie, known for 100% British cured meats. Both are best enjoyed with good bread, perhaps some olives, and naturally, a lovely glass of wine.",
     "items": [
       { "name": "Baron Bigod", "price": "£9.50", "description": "British cheese on toasted cranberry rye with fig & honey chutney" },

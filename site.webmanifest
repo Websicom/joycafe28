@@ -4,8 +4,8 @@
   "description": "Healthy by day, naughty by night.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8f4ec",
-  "theme_color": "#f8f4ec",
+  "background_color": "#fbfaf6",
+  "theme_color": "#fbfaf6",
   "icons": [
     {
       "src": "/assets/brand/joy-favicon-512.png",
