@@ -16,7 +16,7 @@ export function initTheme() {
       modeButton.title = `Switch to ${nextMode === 'day' ? 'day' : 'dark'} theme`;
       modeButton.setAttribute('aria-label', `${mode === 'day' ? 'Day' : 'Dark'} theme active. Switch to ${nextMode === 'day' ? 'day' : 'dark'} theme`);
     }
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'night' ? '#4b413d' : '#fbfaf6');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'night' ? '#2e2926' : '#fbfaf6');
   };
 
   function getScrollTheme() {
