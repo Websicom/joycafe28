@@ -53,6 +53,7 @@ assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
 assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
+assert(homepage.includes('.booking-form,.booking-form>*{min-width:0}') && homepage.includes('min-inline-size:0;max-inline-size:100%') && homepage.includes('-webkit-appearance:none'), 'index.html: date input should be constrained for iPhone Safari');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');
 assert(homepage.includes('class="announcement" id="announcement" aria-live="polite"><span>') && !homepage.includes('id="announcement" aria-live="polite"><span>Joy Cafe opens Wednesday 9 September. Bookings are now open.</span><a'), 'index.html: announcement should not include a booking link');
