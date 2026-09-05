@@ -97,15 +97,18 @@
         <p>If you’d like to book a table at Joy, please fill in the form below.</p>
         <p class="booking-note">We have limited seating, so booking is recommended for evenings. If you have any questions, feel free to give us a call on <a href="tel:01763230140"><strong>01763 230140</strong></a> — we’d be happy to help.</p>
       </div>
-      <form class="booking-form" id="booking-form" data-reveal="right">
-        <label for="party-size">Quantity of people</label>
-        <div class="select-wrap"><select id="party-size" name="partySize">{{PARTY_OPTIONS}}</select></div>
-        <label for="booking-service">Daytime or evening</label>
-        <div class="select-wrap"><select id="booking-service" name="service">{{SERVICE_OPTIONS}}</select></div>
-        <label for="booking-date">Date</label>
-        <input id="booking-date" name="date" type="date" required>
-        <button class="button" type="submit"><span class="button-label">Find a table</span><svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></button>
-        <p id="booking-status" class="booking-status" aria-live="polite"></p>
+      <form class="booking-form" id="booking-form" data-reveal="right" novalidate>
+        <div class="booking-field"><label for="booking-name">Name</label><input id="booking-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="booking-name-error"><p class="field-error" id="booking-name-error"></p></div>
+        <div class="booking-field"><label for="party-size">Number of people</label><div class="select-wrap"><select id="party-size" name="partySize" required aria-describedby="party-size-error"><option value="">Choose party size</option>{{PARTY_OPTIONS}}</select></div><p class="field-error" id="party-size-error"></p></div>
+        <div class="booking-field"><label for="booking-date">Date</label><div class="select-wrap"><select id="booking-date" name="date" required aria-describedby="booking-date-error"><option value="">Choose a date</option></select></div><p class="field-error" id="booking-date-error"></p></div>
+        <div class="booking-field"><label for="booking-time">Time</label><div class="select-wrap"><select id="booking-time" name="time" required disabled aria-describedby="booking-time-error"><option value="">Choose a date first</option></select></div><p class="field-error" id="booking-time-error"></p></div>
+        <div class="booking-field"><label for="booking-email">Email</label><input id="booking-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required aria-describedby="booking-email-error"><p class="field-error" id="booking-email-error"></p></div>
+        <div class="booking-field"><label for="booking-phone">Phone</label><input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" required aria-describedby="booking-phone-error"><p class="field-error" id="booking-phone-error"></p></div>
+        <div class="booking-field booking-field-wide"><label for="booking-requests">Dietaries, allergies or any special requests</label><textarea id="booking-requests" name="requests" rows="4" maxlength="1000" aria-describedby="booking-requests-error"></textarea><p class="field-error" id="booking-requests-error"></p></div>
+        <div class="booking-honeypot" aria-hidden="true"><label for="booking-website">Website</label><input id="booking-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+        <div class="booking-turnstile" id="booking-turnstile"><p>Loading security check…</p></div>
+        <button class="button" type="submit" disabled><span class="button-label">Send reservation request</span><svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></button>
+        <p id="booking-status" class="booking-status" role="status" aria-live="polite" tabindex="-1"></p>
       </form>
     </section>
 

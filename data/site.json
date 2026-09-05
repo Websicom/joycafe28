@@ -20,14 +20,5 @@
     "longitude": 0.0147,
     "zoom": 17,
     "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=28%20Station%20Road%2C%20Melbourn%2C%20Royston%2C%20SG8%206DX"
-  },
-  "hours": [
-    { "day": "Monday", "times": ["Closed"] },
-    { "day": "Tuesday", "times": ["Closed"] },
-    { "day": "Wednesday", "times": ["7:30am – 4pm"] },
-    { "day": "Thursday", "times": ["7:30am – 4pm", "6pm – 11pm"] },
-    { "day": "Friday", "times": ["7:30am – 7pm"] },
-    { "day": "Saturday", "times": ["9am – 3pm"] },
-    { "day": "Sunday", "times": ["Closed"] }
-  ]
+  }
 }

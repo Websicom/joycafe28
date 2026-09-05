@@ -21,9 +21,9 @@ The deployable static website is written to `dist/`.
 
 ## Updating content
 
-- Business details and opening hours: `data/site.json`
+- Business details: `data/site.json`
+- Opening hours, reservation slots and validation limits: `shared/reservations.js`
 - Brunch/lunch and evening menus: `data/menu.json`
-- Booking destination and choices: `data/booking.json`
 - Time-limited notices: `data/announcements.json`
 - FAQs: `data/faqs.json`
 - Testimonials: `data/testimonials.json`
@@ -32,4 +32,16 @@ Run `npm run build` after editing content. The build validates the JSON, renders
 
 ## Hosting
 
-Upload the contents of `dist/` to Cloudflare Pages, GitHub Pages, or any conventional static host. The project includes the configuration needed for OpenAI Sites hosting.
+The site is deployed to Cloudflare Pages. Its `/api/reservations` Pages Function forwards requests over a private service binding named `BOOKING_SERVICE` to the `joycafe28-reservations` Worker. The Worker uses Cloudflare Turnstile, native rate limiting and a destination-restricted Email Service binding named `BOOKING_EMAIL`.
+
+Deploy the Worker after its Cloudflare Email Sending domain, verified destination and Turnstile keys have been configured:
+
+```bash
+npx wrangler secret put TURNSTILE_SITE_KEY --config wrangler.reservations.jsonc
+npx wrangler secret put TURNSTILE_SECRET_KEY --config wrangler.reservations.jsonc
+npm run deploy:reservations
+```
+
+The same deployment is available as the manually triggered **Deploy reservation Worker** GitHub Actions workflow.
+
+Then connect the Pages `BOOKING_SERVICE` service binding to `joycafe28-reservations` and redeploy the Pages project.

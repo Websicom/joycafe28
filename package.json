@@ -7,7 +7,8 @@
     "dev": "npm run images && node scripts/build.mjs && node scripts/dev.mjs",
     "build": "npm run images && node scripts/build.mjs",
     "images": "node scripts/images.mjs",
-    "test": "node scripts/qa.mjs"
+    "test": "node scripts/qa.mjs && node tests/reservations.test.mjs",
+    "deploy:reservations": "npx --yes wrangler@4 deploy --config wrangler.reservations.jsonc"
   },
   "devDependencies": {
     "@fontsource/cormorant-garamond": "^5.2.8",

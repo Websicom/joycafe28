@@ -1,7 +1,6 @@
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { getActiveAnnouncement } from '../assets/js/announcements.js';
-import { getBookingWeek } from '../assets/js/booking.js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const pages = ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
@@ -52,8 +51,9 @@ assert(!homepage.includes('id="reviews"') && !homepage.includes('{{TESTIMONIALS}
 assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee-inset"'), 'index.html: coffee images should use the main and inset composition');
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
-assert(homepage.includes('id="booking-date"') && homepage.includes('Find a table'), 'index.html: booking form needs a date and Find a table action');
-assert(homepage.includes('.booking-form,.booking-form>*{min-width:0}') && homepage.includes('min-inline-size:0;max-inline-size:100%') && homepage.includes('-webkit-appearance:none'), 'index.html: date input should be constrained for iPhone Safari');
+assert(homepage.includes('id="booking-name"') && homepage.includes('id="booking-date"') && homepage.includes('id="booking-time"') && homepage.includes('Send reservation request'), 'index.html: reservation request form needs all key fields and its submit action');
+assert(homepage.includes('id="booking-email"') && homepage.includes('id="booking-phone"') && homepage.includes('id="booking-requests"') && homepage.includes('id="booking-turnstile"'), 'index.html: reservation form needs contact, requests and Turnstile fields');
+assert(!homepage.includes('booking-service') && !homepage.includes('Find a table'), 'index.html: old SumUp controls should be removed');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');
 assert(homepage.includes('class="announcement" id="announcement" aria-live="polite"><span>') && !homepage.includes('id="announcement" aria-live="polite"><span>Joy Cafe opens Wednesday 9 September. Bookings are now open.</span><a'), 'index.html: announcement should not include a booking link');
@@ -73,9 +73,6 @@ assert(favicon.length < 10_000 && favicon.readUInt16LE(2) === 1 && favicon.readU
 const wineList = await readFile(path.join(root, 'assets', 'documents', 'joy-wine-list.pdf'));
 assert(wineList.subarray(0, 5).toString() === '%PDF-' && wineList.length > 1000, 'wine list: expected a valid linked PDF asset');
 assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');
-
-const bookingWeek = getBookingWeek('2026-09-09');
-assert(bookingWeek.startDate === '2026-09-07' && bookingWeek.endDate === '2026-09-13', 'booking date should resolve to its surrounding Monday and Sunday');
 
 const announcements = JSON.parse(await readFile(path.join(root, 'data', 'announcements.json'), 'utf8'));
 assert(getActiveAnnouncement(announcements, new Date('2026-09-09T22:00:00+01:00'))?.id === 'opening-2026', 'opening announcement should be active on 9 September');
