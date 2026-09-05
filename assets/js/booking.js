@@ -82,6 +82,7 @@ export async function initBooking() {
       sitekey: config.siteKey,
       action: 'reservation_request',
       theme: 'auto',
+      appearance: 'interaction-only',
       callback: (token) => { turnstileToken = token; setLoading(false); },
       'expired-callback': resetTurnstile,
       'error-callback': resetTurnstile

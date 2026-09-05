@@ -2,7 +2,7 @@ export const RESERVATION_CONFIG = Object.freeze({
   timeZone: 'Europe/London',
   slotMinutes: 30,
   bookingWindowDays: 90,
-  partySize: { min: 1, max: 4 },
+  partySize: { min: 1, max: 6 },
   limits: Object.freeze({ name: 100, email: 254, phone: 40, requests: 1000, turnstileToken: 2048 }),
   schedule: Object.freeze({
     0: Object.freeze([]),

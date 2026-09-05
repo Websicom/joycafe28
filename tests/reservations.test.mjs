@@ -19,6 +19,8 @@ assert.equal(validateReservation({ ...valid, date: '2026-09-04' }, { now }).erro
 assert.equal(validateReservation({ ...valid, date: '2026-09-06' }, { now }).errors.date.length > 0, true, 'Closed dates should fail');
 assert.equal(validateReservation({ ...valid, time: '16:00' }, { now }).errors.time.length > 0, true, 'Closing time should fail');
 assert.equal(validateReservation({ ...valid, partySize: '99' }, { now }).errors.partySize.length > 0, true, 'Altered party size should fail');
+assert.equal(validateReservation({ ...valid, partySize: '6' }, { now }).valid, true, 'Party size of six should be accepted');
+assert.equal(validateReservation({ ...valid, partySize: '7' }, { now }).errors.partySize.length > 0, true, 'Party size above six should fail');
 assert.equal(validateReservation({ ...valid, email: 'bad\r\nBcc:test@example.com' }, { now }).errors.email.length > 0, true, 'Header injection should fail');
 assert.equal(validateReservation({ ...valid, name: '' }, { now }).errors.name.length > 0, true, 'Missing required fields should fail');
 
