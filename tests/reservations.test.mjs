@@ -34,14 +34,21 @@ for (const value of ['Alex Example', '2', 'Wednesday, 9 September 2026', '12:00p
 let sent;
 const env = {
   TURNSTILE_SITE_KEY: 'site-key', TURNSTILE_SECRET_KEY: 'secret',
+  GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/test-deployment/exec',
+  GOOGLE_APPS_SCRIPT_SECRET: '12345678901234567890123456789012',
   BOOKING_RATE_LIMITER: { limit: async () => ({ success: true }) },
-  BOOKING_EMAIL: { send: async (message) => { sent = message; return { messageId: 'test-message' }; } }
 };
 const request = (body) => new Request('https://example.test/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Client-IP': '192.0.2.1' }, body: JSON.stringify(body) });
-const success = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ success: true, action: 'reservation_request' }) });
+const successfulFetch = async (url, options) => {
+  if (String(url).includes('siteverify')) return Response.json({ success: true, action: 'reservation_request' });
+  sent = JSON.parse(options.body);
+  return Response.json({ ok: true });
+};
+const success = await handleReservation(request(valid), env, { now, fetch: successfulFetch });
 assert.equal(success.status, 200, 'Successful Function request should return 200');
 assert.equal((await success.json()).ok, true);
-assert.equal(sent.replyTo, valid.email, 'Email should use the validated customer address only as Reply-To');
+assert.equal(sent.secret, '12345678901234567890123456789012', 'Worker should authenticate to the private Google webhook');
+assert.equal(sent.reservation.email, valid.email, 'Worker should forward the validated customer address');
 
 sent = undefined;
 const turnstileFailure = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ success: false }) });
@@ -57,6 +64,8 @@ assert.equal(duplicateToken.status, 400, 'Replayed Turnstile token should be rej
 
 const configResponse = await handleReservation(new Request('https://example.test/'), env);
 assert.deepEqual(await configResponse.json(), { enabled: true, siteKey: 'site-key' });
+const disabledConfigResponse = await handleReservation(new Request('https://example.test/'), { ...env, GOOGLE_APPS_SCRIPT_URL: '' });
+assert.deepEqual(await disabledConfigResponse.json(), { enabled: false, siteKey: 'site-key' });
 
 const proxyEnv = { BOOKING_SERVICE: { fetch: async (proxied) => Response.json({ method: proxied.method, clientIp: proxied.headers.get('X-Client-IP') }) } };
 const proxiedGet = await onRequestGet({ request: new Request('https://example.test/api/reservations', { headers: { 'CF-Connecting-IP': '192.0.2.2' } }), env: proxyEnv });

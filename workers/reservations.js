@@ -4,6 +4,7 @@ const SUCCESS_MESSAGE = 'Thank you. Your reservation request has been sent to Jo
 const PUBLIC_ERROR = 'We could not send your reservation request. Please try again or call Joy Café on 01763 230140.';
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+const googleWebhookConfigured = (env) => /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(env.GOOGLE_APPS_SCRIPT_URL || '') && String(env.GOOGLE_APPS_SCRIPT_SECRET || '').length >= 32;
 
 export function buildReservationEmail(value) {
   const date = formatDate(value.date);
@@ -37,14 +38,40 @@ async function verifyTurnstile(token, request, secret, fetcher) {
   return result.success === true && (!result.action || result.action === 'reservation_request');
 }
 
+async function sendViaGoogleAppsScript(value, env, fetcher) {
+  const response = await fetcher(env.GOOGLE_APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    body: JSON.stringify({
+      secret: env.GOOGLE_APPS_SCRIPT_SECRET,
+      reservation: {
+        name: value.name,
+        partySize: value.partySize,
+        date: value.date,
+        dateLabel: formatDate(value.date),
+        time: value.time,
+        timeLabel: formatTime(value.time),
+        email: value.email,
+        phone: value.phone,
+        requests: value.requests || ''
+      }
+    }),
+    redirect: 'follow'
+  });
+  if (!response.ok) throw new Error('google_webhook_http_error');
+  const result = await response.json().catch(() => null);
+  if (!result?.ok) throw new Error('google_webhook_rejected');
+  return result;
+}
+
 export async function handleReservation(request, env, runtime = { fetch }) {
   if (request.method === 'GET') {
-    return json({ enabled: Boolean(env.TURNSTILE_SITE_KEY && env.BOOKING_EMAIL), siteKey: env.TURNSTILE_SITE_KEY || null });
+    return json({ enabled: Boolean(env.TURNSTILE_SITE_KEY && googleWebhookConfigured(env)), siteKey: env.TURNSTILE_SITE_KEY || null });
   }
   if (request.method !== 'POST') return json({ ok: false, message: PUBLIC_ERROR }, 405);
   const length = Number(request.headers.get('Content-Length') || 0);
   if (length > 16_384) return json({ ok: false, message: PUBLIC_ERROR }, 413);
-  if (!env.BOOKING_EMAIL || !env.TURNSTILE_SECRET_KEY) return json({ ok: false, message: PUBLIC_ERROR }, 503);
+  if (!googleWebhookConfigured(env) || !env.TURNSTILE_SECRET_KEY) return json({ ok: false, message: PUBLIC_ERROR }, 503);
 
   const ip = request.headers.get('X-Client-IP') || request.headers.get('CF-Connecting-IP') || 'unknown';
   if (env.BOOKING_RATE_LIMITER?.limit) {
@@ -64,8 +91,8 @@ export async function handleReservation(request, env, runtime = { fetch }) {
   if (!verified) return json({ ok: false, message: PUBLIC_ERROR, verificationFailed: true }, 400);
 
   try {
-    const result = await env.BOOKING_EMAIL.send(buildReservationEmail(validation.value));
-    console.log(JSON.stringify({ event: 'reservation_email_sent', messageId: result?.messageId || 'unknown' }));
+    await sendViaGoogleAppsScript(validation.value, env, runtime.fetch);
+    console.log(JSON.stringify({ event: 'reservation_email_sent', provider: 'google_apps_script' }));
     return json({ ok: true, message: SUCCESS_MESSAGE });
   } catch (error) {
     console.error(JSON.stringify({ event: 'reservation_email_failed', code: error?.code || 'unknown' }));

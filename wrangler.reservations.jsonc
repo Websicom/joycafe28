@@ -6,13 +6,6 @@
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAEpn0qsB3m4FE1kb"
   },
-  "send_email": [
-    {
-      "name": "BOOKING_EMAIL",
-      "destination_address": "steff@joycafe28.com",
-      "allowed_sender_addresses": ["bookings@joycafe28.com"]
-    }
-  ],
   "ratelimits": [
     {
       "name": "BOOKING_RATE_LIMITER",

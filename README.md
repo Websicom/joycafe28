@@ -32,15 +32,17 @@ Run `npm run build` after editing content. The build validates the JSON, renders
 
 ## Hosting
 
-The site is deployed to Cloudflare Pages. Its `/api/reservations` Pages Function forwards requests over a private service binding named `BOOKING_SERVICE` to the `joycafe28-reservations` Worker. The Worker uses Cloudflare Turnstile, native rate limiting and a destination-restricted Email Service binding named `BOOKING_EMAIL`.
+The site is deployed to Cloudflare Pages. Its `/api/reservations` Pages Function forwards requests over a private service binding named `BOOKING_SERVICE` to the `joycafe28-reservations` Worker. The Worker uses Cloudflare Turnstile, native rate limiting and a private Google Apps Script webhook that sends through the client's existing Workspace account.
 
-Deploy the Worker after its Cloudflare Email Sending domain, verified destination and Turnstile keys have been configured:
+Deploy the Worker after Turnstile has been configured:
 
 ```bash
 npx wrangler secret put TURNSTILE_SITE_KEY --config wrangler.reservations.jsonc
 npx wrangler secret put TURNSTILE_SECRET_KEY --config wrangler.reservations.jsonc
 npm run deploy:reservations
 ```
+
+Complete the one-time Google setup using `integrations/google-apps-script/Code.gs`. Add the resulting `/exec` web-app URL as the Worker text variable `GOOGLE_APPS_SCRIPT_URL`, and add the same random value to the Apps Script property `BOOKING_WEBHOOK_SECRET` and Worker secret `GOOGLE_APPS_SCRIPT_SECRET`. The form remains disabled until both Worker values exist.
 
 The same deployment is available as the manually triggered **Deploy reservation Worker** GitHub Actions workflow.
 
