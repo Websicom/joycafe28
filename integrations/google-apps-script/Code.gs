@@ -20,6 +20,12 @@ function doGet() {
   return jsonResponse({ ok: true, service: 'joy-reservations' });
 }
 
+// Run this once from the Apps Script editor so Google can request only the
+// permission needed to send mail. It does not send a message.
+function authorise() {
+  return MailApp.getRemainingDailyQuota();
+}
+
 function doPost(event) {
   try {
     const input = JSON.parse(event && event.postData ? event.postData.contents : '{}');
