@@ -39,7 +39,7 @@ assert(!homepage.includes('data-mode="auto"') && !homepage.includes('theme-icon-
 assert(homepage.includes('id="night"') && homepage.includes('id="visit"'), 'index.html: automatic theme needs its night and day section markers');
 assert(themeScript.includes("mode === 'night' ? 'night' : getScrollTheme()") && themeScript.includes("if (mode === 'day')") && themeScript.includes("window.addEventListener('scroll'"), 'theme.js: day mode should retain automatic night sections while dark mode remains global');
 assert(homepage.includes('<h1 id="hero-title"><span class="joy-word">joy</span><span class="hero-descriptor">Cafe &amp; Wine Bar</span></h1>'), 'index.html: hero heading should give joy its own larger line');
-assert(homepage.includes('Nourishing food · simple plates · coffee · cheese · wine · good vibes'), 'index.html: hero introduction should use the client copy');
+assert(homepage.includes('Nourishing food · simple plates · coffee · cheese · wine · good vibes. Pop in for a light bite, a drink or to book a table.'), 'index.html: hero introduction should use the current client copy');
 assert(homepage.includes('Nourishing food.<br>Really good coffee.') && !homepage.includes('<li>Seasonal</li>'), 'index.html: day section should use the capitalised Nourishing food heading without the seasonal tag');
 assert(!homepage.includes('Your table at Joy') && homepage.includes('If you’d like to book a table at Joy, please fill in the form below.'), 'index.html: booking introduction should use the requested copy without its old eyebrow');
 assert(homepage.includes('our family-run women’s fashion, gifts and beauty therapy destination next door.'), 'index.html: ESSE note should use the shortened family-run description');
