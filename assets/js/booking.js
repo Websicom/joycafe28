@@ -32,6 +32,7 @@ export async function initBooking() {
   let turnstileToken = '';
   let widgetId;
   let submitting = false;
+  let turnstileSetup;
 
   const setStatus = (message = '', kind = '') => {
     status.textContent = message;
@@ -80,25 +81,41 @@ export async function initBooking() {
   });
   Object.keys(fieldIds).forEach((name) => form.elements[name]?.addEventListener('input', () => setFieldError(name)));
 
-  try {
-    const configResponse = await fetch('/api/reservations', { cache: 'no-store' });
-    const config = await configResponse.json();
-    if (!configResponse.ok || !config.enabled || !config.siteKey) throw new Error('Reservation service is not configured.');
-    const turnstile = await loadTurnstile();
-    turnstileHost.replaceChildren();
-    widgetId = turnstile.render(turnstileHost, {
-      sitekey: config.siteKey,
-      action: 'reservation_request',
-      theme: 'auto',
-      appearance: 'interaction-only',
-      callback: (token) => { turnstileToken = token; setLoading(false); },
-      'expired-callback': resetTurnstile,
-      'error-callback': resetTurnstile
-    });
-  } catch {
-    turnstileHost.innerHTML = '<p>Online reservation requests are temporarily unavailable. Please call <a href="tel:01763230140">01763 230140</a>.</p>';
-    setStatus('Online reservation requests are temporarily unavailable. Please call Joy Café on 01763 230140.', 'error');
-  }
+  const initialiseTurnstile = () => {
+    if (turnstileSetup) return turnstileSetup;
+    turnstileSetup = (async () => {
+      try {
+        const configResponse = await fetch('/api/reservations', { cache: 'no-store' });
+        const config = await configResponse.json();
+        if (!configResponse.ok || !config.enabled || !config.siteKey) throw new Error('Reservation service is not configured.');
+        const turnstile = await loadTurnstile();
+        turnstileHost.hidden = false;
+        turnstileHost.replaceChildren();
+        widgetId = turnstile.render(turnstileHost, {
+          sitekey: config.siteKey,
+          action: 'reservation_request',
+          theme: 'auto',
+          appearance: 'interaction-only',
+          callback: (token) => { turnstileToken = token; setLoading(false); },
+          'expired-callback': resetTurnstile,
+          'error-callback': resetTurnstile
+        });
+      } catch {
+        turnstileHost.hidden = false;
+        turnstileHost.innerHTML = '<p>Online reservation requests are temporarily unavailable. Please call <a href="tel:01763230140">01763 230140</a>.</p>';
+        setStatus('Online reservation requests are temporarily unavailable. Please call Joy Café on 01763 230140.', 'error');
+      }
+    })();
+    return turnstileSetup;
+  };
+  const activateTurnstile = (event) => {
+    if (!event.isTrusted) return;
+    form.removeEventListener('pointerdown', activateTurnstile);
+    form.removeEventListener('keydown', activateTurnstile);
+    void initialiseTurnstile();
+  };
+  form.addEventListener('pointerdown', activateTurnstile);
+  form.addEventListener('keydown', activateTurnstile);
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();

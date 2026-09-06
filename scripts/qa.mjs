@@ -42,6 +42,7 @@ assert(homepage.includes('Nourishing food · simple plates · coffee · cheese �
 assert(homepage.includes('Nourishing food.<br>Really good coffee.') && !homepage.includes('<li>Seasonal</li>'), 'index.html: day section should use the capitalised Nourishing food heading without the seasonal tag');
 assert(!homepage.includes('Your table at Joy') && homepage.includes('If you’d like to book a table at Joy, please fill in the form below.'), 'index.html: booking introduction should use the requested copy without its old eyebrow');
 assert(homepage.includes('our family-run women’s fashion, gifts and beauty therapy destination next door.'), 'index.html: ESSE note should use the shortened family-run description');
+assert(homepage.includes('<div class="booking-turnstile" id="booking-turnstile" hidden></div>'), 'index.html: Turnstile should remain unloaded until a visitor uses the booking form');
 assert(homepage.includes('<h2 id="night-title">Thursday evenings at joy.</h2>') && homepage.includes('<li>Good food</li><li>Good wine</li><li>Good company</li>'), 'index.html: evening introduction should use the new Thursday heading and three themes');
 assert(homepage.includes('Thursday 6pm – 9pm') && !homepage.includes('Friday 2pm – 6pm'), 'index.html: evening availability should be Thursday only');
 assert(homepage.includes('Discover something different') && homepage.includes('organic, biodynamic and very tasty!'), 'index.html: wine introduction should use the new client copy');

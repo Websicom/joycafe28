@@ -106,7 +106,7 @@
         <div class="booking-field"><label for="booking-phone">Phone</label><input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" required aria-describedby="booking-phone-error"><p class="field-error" id="booking-phone-error"></p></div>
         <div class="booking-field booking-field-wide"><label for="booking-requests">Dietaries, allergies or any special requests</label><textarea id="booking-requests" name="requests" rows="4" maxlength="1000" aria-describedby="booking-requests-error"></textarea><p class="field-error" id="booking-requests-error"></p></div>
         <div class="booking-honeypot" aria-hidden="true"><label for="booking-website">Website</label><input id="booking-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-        <div class="booking-turnstile" id="booking-turnstile"><p>Loading security check…</p></div>
+        <div class="booking-turnstile" id="booking-turnstile" hidden></div>
         <button class="button" type="submit" disabled><span class="button-label">Send reservation request</span><svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></button>
         <p id="booking-status" class="booking-status" role="status" aria-live="polite" tabindex="-1"></p>
       </form>
