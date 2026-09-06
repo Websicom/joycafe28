@@ -1,6 +1,6 @@
 export const RESERVATION_CONFIG = Object.freeze({
   timeZone: 'Europe/London',
-  slotMinutes: 30,
+  slotMinutes: 15,
   bookingWindowDays: 90,
   partySize: { min: 1, max: 6 },
   limits: Object.freeze({ name: 100, email: 254, phone: 40, requests: 1000, turnstileToken: 2048 }),
@@ -12,6 +12,15 @@ export const RESERVATION_CONFIG = Object.freeze({
     4: Object.freeze([{ start: '07:30', end: '16:00' }, { start: '18:00', end: '23:00' }]),
     5: Object.freeze([{ start: '07:30', end: '19:00' }]),
     6: Object.freeze([{ start: '09:00', end: '15:00' }])
+  }),
+  reservationSchedule: Object.freeze({
+    0: Object.freeze([]),
+    1: Object.freeze([]),
+    2: Object.freeze([]),
+    3: Object.freeze([{ start: '11:00', lastSlot: '13:45' }]),
+    4: Object.freeze([{ start: '11:00', lastSlot: '13:45' }, { start: '18:00', lastSlot: '20:45' }]),
+    5: Object.freeze([{ start: '11:00', lastSlot: '18:00' }]),
+    6: Object.freeze([{ start: '11:00', lastSlot: '13:30' }])
   })
 });
 
@@ -54,10 +63,10 @@ const getLondonTimeMinutes = (now) => {
 
 export function getReservationSlots(dateValue, { now = new Date(), excludePast = true } = {}) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) return [];
-  const periods = RESERVATION_CONFIG.schedule[getWeekday(dateValue)] || [];
-  const slots = periods.flatMap(({ start, end }) => {
+  const periods = RESERVATION_CONFIG.reservationSchedule[getWeekday(dateValue)] || [];
+  const slots = periods.flatMap(({ start, lastSlot }) => {
     const slots = [];
-    for (let time = toMinutes(start); time <= toMinutes(end) - RESERVATION_CONFIG.slotMinutes; time += RESERVATION_CONFIG.slotMinutes) {
+    for (let time = toMinutes(start); time <= toMinutes(lastSlot); time += RESERVATION_CONFIG.slotMinutes) {
       slots.push(fromMinutes(time));
     }
     return slots;

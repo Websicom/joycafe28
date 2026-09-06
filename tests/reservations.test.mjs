@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getLondonToday, getOpenDates, getReservationSlots, validateReservation } from '../shared/reservations.js';
+import { getDisplayHours, getLondonToday, getOpenDates, getReservationSlots, validateReservation } from '../shared/reservations.js';
 import { buildReservationEmail, handleReservation } from '../workers/reservations.js';
 import { onRequestGet, onRequestPost } from '../functions/api/reservations.js';
 
@@ -7,14 +7,23 @@ const now = new Date('2026-09-05T12:00:00Z');
 assert.equal(getLondonToday(new Date('2026-03-29T23:30:00Z')), '2026-03-30', 'London date should observe BST');
 assert.deepEqual(getReservationSlots('2026-09-06', { now }), [], 'Sunday should be closed');
 assert.deepEqual(getReservationSlots('2026-09-07', { now }), [], 'Monday should be closed');
-assert.equal(getReservationSlots('2026-09-09', { now }).at(-1), '15:30', 'Wednesday slots should stop 30 minutes before closing');
-assert.equal(getReservationSlots('2026-09-10', { now }).at(-1), '22:30', 'Thursday evening slots should stop 30 minutes before closing');
-assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:30', 'Friday slots should stop 30 minutes before closing');
-assert.equal(getReservationSlots('2026-09-05', { now })[0], '13:30', 'Past times on the current open day should not be offered in Europe/London');
+assert.deepEqual(getReservationSlots('2026-09-09', { now }), Array.from({ length: 12 }, (_, index) => `${String(11 + Math.floor(index / 4)).padStart(2, '0')}:${String((index % 4) * 15).padStart(2, '0')}`), 'Wednesday should offer 15-minute slots from 11:00 through 13:45');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(11), '13:45', 'Thursday lunch reservations should end at 13:45');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(12), '18:00', 'Thursday evening reservations should begin at 18:00');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(-1), '20:45', 'Thursday evening reservations should end at 20:45');
+assert.equal(getReservationSlots('2026-09-11', { now })[0], '11:00', 'Friday reservations should begin at 11:00');
+assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:00', 'Friday reservations should end at 18:00');
+assert.equal(getReservationSlots('2026-09-12', { now })[0], '11:00', 'Saturday reservations should begin at 11:00');
+assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '13:30', 'Saturday reservations should end at 13:30');
+assert.equal(getReservationSlots('2026-09-05', { now })[0], '13:15', 'Past times on the current open day should not be offered in Europe/London');
 assert.equal(getOpenDates(now)[0], '2026-09-05', 'Open dates should include today when open');
+assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Wednesday').times, ['7:30am – 4pm'], 'Public opening hours should remain unchanged');
+assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, ['7:30am – 4pm', '6pm – 11pm'], 'Public Thursday opening hours should remain unchanged');
 
 const valid = { name: 'Alex Example', partySize: '2', date: '2026-09-09', time: '12:00', email: 'alex@example.com', phone: '07123 456789', requests: 'Gluten free', turnstileToken: 'test-token', website: '' };
 assert.equal(validateReservation(valid, { now }).valid, true, 'Valid reservation should pass');
+assert.equal(validateReservation({ ...valid, time: '13:45' }, { now }).valid, true, 'The final Wednesday slot should be accepted');
+assert.equal(validateReservation({ ...valid, time: '14:00' }, { now }).errors.time.length > 0, true, 'Times after the final Wednesday slot should fail');
 assert.equal(validateReservation({ ...valid, date: '2026-09-04' }, { now }).errors.date.length > 0, true, 'Past dates should fail');
 assert.equal(validateReservation({ ...valid, date: '2026-09-06' }, { now }).errors.date.length > 0, true, 'Closed dates should fail');
 assert.equal(validateReservation({ ...valid, time: '16:00' }, { now }).errors.time.length > 0, true, 'Closing time should fail');
