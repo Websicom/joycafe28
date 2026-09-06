@@ -61,6 +61,14 @@ export async function initBooking() {
     if (window.turnstile && widgetId !== undefined) window.turnstile.reset(widgetId);
     setLoading(false);
   };
+  const completeTurnstile = () => {
+    turnstileToken = '';
+    if (window.turnstile && widgetId !== undefined) window.turnstile.remove(widgetId);
+    widgetId = undefined;
+    turnstileHost.replaceChildren();
+    turnstileHost.hidden = true;
+    setLoading(false);
+  };
 
   getOpenDates().forEach((date) => dateSelect.add(new Option(formatDate(date), date)));
   dateSelect.addEventListener('change', () => {
@@ -117,7 +125,7 @@ export async function initBooking() {
       showErrors({});
       setStatus(result.message, 'success');
       status.focus();
-      resetTurnstile();
+      completeTurnstile();
     } catch (error) {
       setStatus(error.message || 'We could not send your reservation request. Please try again or call Joy Café on 01763 230140.', 'error');
       status.focus();

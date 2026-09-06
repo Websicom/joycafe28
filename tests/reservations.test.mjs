@@ -76,4 +76,5 @@ assert.equal((await proxiedPost.json()).method, 'POST');
 const bookingScript = await (await import('node:fs/promises')).readFile(new URL('../assets/js/booking.js', import.meta.url), 'utf8');
 assert(bookingScript.includes('if (submitting) return;'), 'Client should prevent duplicate submissions');
 assert(bookingScript.includes("'expired-callback': resetTurnstile") && bookingScript.includes("'error-callback': resetTurnstile"), 'Client should recover from Turnstile expiry and errors');
+assert(bookingScript.includes('turnstile.remove(widgetId)') && bookingScript.includes('completeTurnstile();'), 'Client should remove Turnstile after a successful submission');
 console.log('Reservation tests passed: hours, validation, Turnstile, email payload, proxy responses and duplicate prevention.');
