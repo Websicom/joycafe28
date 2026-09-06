@@ -8,7 +8,7 @@ const output = path.join(root, 'assets', 'images');
 const documentsOutput = path.join(root, 'assets', 'documents');
 const widths = [480, 768, 1024, 1440, 1920];
 const images = {
-  'image00003.jpeg': 'joy-cafe-melbourn-interior',
+  'Joy-cafe-hero.webp': 'joy-cafe-melbourn-interior',
   'image00004.jpeg': 'joy-cafe-coffee-bar',
   'image00005.jpeg': 'joy-cafe-family',
   'image00006.jpeg': 'joy-cafe-espresso-machine',
@@ -29,12 +29,12 @@ for (const [filename, slug] of Object.entries(images)) {
   }
   await sharp(source).rotate().resize({ width: Math.min(1920, metadata.width), withoutEnlargement: true }).jpeg({ quality: 82, progressive: true }).toFile(path.join(output, `${slug}.jpg`));
 }
-await sharp(path.join(input, 'image00003.jpeg'))
+await sharp(path.join(input, 'Joy-cafe-hero.webp'))
   .rotate()
   .resize({ width: 480, height: 748, fit: 'cover', position: 'centre' })
   .webp({ quality: 40, effort: 6 })
   .toFile(path.join(output, 'joy-cafe-melbourn-interior-mobile.webp'));
-await sharp(path.join(input, 'image00003.jpeg'))
+await sharp(path.join(input, 'Joy-cafe-hero.webp'))
   .rotate()
   .resize({ width: 480, height: 748, fit: 'cover', position: 'centre' })
   .avif({ quality: 38, effort: 7 })
