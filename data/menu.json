@@ -30,7 +30,6 @@
       { "name": "Breads", "price": "£2.00 each", "description": "Focaccia with olive oil & balsamic; Cranberry rye & organic butter; Sourdough & olive tapenade" },
       { "name": "Affogato", "price": "£6.00", "description": "Espresso, organic clotted cream ice cream & biscotti" }
     ],
-    "additionalNote": "Cheese & charcuterie boards are available to pre-order for groups of three or more. Just let us know when booking your table if you'd like one prepared for you.",
     "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
   }
 }

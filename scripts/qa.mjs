@@ -46,6 +46,7 @@ assert(homepage.includes('<h2 id="story-title">Welcome to joy</h2>') && homepage
 assert(homepage.includes('<h2 id="final-title">Created with Joy<br>to bring you joy.</h2>') && homepage.includes('Nourishing food. Simple plates. Coffee. Cheese . Wine. Good vibes. In heart of Melbourn.'), 'index.html: final CTA should use the requested heading and supporting copy');
 assert(!homepage.includes('<h3>Add Halloumi</h3>') && homepage.includes('Add halloumi £3.50'), 'index.html: halloumi should appear only within the salad description');
 assert(homepage.includes('<h3>Warm Banana Bread</h3>') && homepage.includes('<h3>Baron Bigod</h3>') && homepage.includes('<h3>Breads</h3><p class="price">£2.00 each</p>') && homepage.includes('<h3>Affogato</h3><p class="price">£6.00</p>'), 'index.html: day and evening menus should contain the attached current items');
+assert(!homepage.includes('Cheese &amp; charcuterie boards are available to pre-order') && !homepage.includes('class="menu-note"'), 'index.html: pre-order note and its bordered container should be removed');
 assert(homepage.includes('<div class="booking-turnstile" id="booking-turnstile" hidden></div>'), 'index.html: Turnstile should remain unloaded until a visitor uses the booking form');
 assert(homepage.includes('<h2 id="night-title">Thursday evenings at joy.</h2>') && homepage.includes('<li>Good food</li><li>Good wine</li><li>Good company</li>'), 'index.html: evening introduction should use the new Thursday heading and three themes');
 assert(homepage.includes('Thursday 6pm – 9pm') && !homepage.includes('Friday 2pm – 6pm'), 'index.html: evening availability should be Thursday only');
@@ -75,6 +76,16 @@ assert(homepage.indexOf('class="portrait-main"') < homepage.indexOf('joy-cafe-st
 assert(!homepage.includes('Can I see the wine list online?'), 'index.html: online wine list FAQ should be removed');
 const favicon = await readFile(path.join(root, 'favicon.ico'));
 assert(favicon.length < 10_000 && favicon.readUInt16LE(2) === 1 && favicon.readUInt16LE(4) === 3, 'favicon.ico: expected an optimized three-size icon');
+const faviconPng = await readFile(path.join(root, 'assets', 'brand', 'joy-favicon.png'));
+const faviconWebp = await readFile(path.join(root, 'assets', 'brand', 'joy-favicon.webp'));
+const openGraphPng = await readFile(path.join(root, 'assets', 'brand', 'joy-open-graph-1200x630.png'));
+const openGraphWebp = await readFile(path.join(root, 'assets', 'brand', 'joy-open-graph-1200x630.webp'));
+const appleTouchIcon = await readFile(path.join(root, 'assets', 'brand', 'apple-touch-icon.png'));
+assert(faviconPng.readUInt32BE(16) === 720 && faviconPng.readUInt32BE(20) === 720 && faviconWebp.subarray(0, 4).toString() === 'RIFF', 'favicons: expected supplied 720px PNG and WebP assets');
+assert(openGraphPng.readUInt32BE(16) === 1200 && openGraphPng.readUInt32BE(20) === 630 && openGraphWebp.subarray(0, 4).toString() === 'RIFF', 'Open Graph: expected supplied 1200x630 PNG and WebP assets');
+assert(appleTouchIcon.readUInt32BE(16) === 180 && appleTouchIcon.readUInt32BE(20) === 180, 'Apple touch icon: expected a generated 180x180 PNG');
+assert(homepage.includes('/assets/brand/joy-favicon.png') && homepage.includes('/assets/brand/joy-favicon.webp') && homepage.includes('/assets/brand/apple-touch-icon.png'), 'index.html: supplied favicons and Apple touch icon should be linked');
+assert(homepage.includes('/assets/brand/joy-open-graph-1200x630.png') && homepage.includes('/assets/brand/joy-open-graph-1200x630.webp') && homepage.includes('twitter:card" content="summary_large_image'), 'index.html: supplied PNG and WebP social previews should be linked');
 const wineList = await readFile(path.join(root, 'assets', 'documents', 'joy-wine-list.pdf'));
 assert(wineList.subarray(0, 5).toString() === '%PDF-' && wineList.length > 1000, 'wine list: expected a valid linked PDF asset');
 assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"><p>'), 'index.html: footer tagline should be removed');

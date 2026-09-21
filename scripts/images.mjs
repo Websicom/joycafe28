@@ -6,6 +6,8 @@ const root = path.resolve(import.meta.dirname, '..');
 const input = path.join(root, 'Media and Files', 'images');
 const output = path.join(root, 'assets', 'images');
 const documentsOutput = path.join(root, 'assets', 'documents');
+const brandInput = path.join(root, 'Media and Files', 'logo');
+const brandOutput = path.join(root, 'assets', 'brand');
 const widths = [480, 768, 1024, 1440, 1920];
 const images = {
   'Joy-cafe-hero.webp': 'joy-cafe-melbourn-interior',
@@ -21,6 +23,7 @@ const images = {
 
 await mkdir(output, { recursive: true });
 await mkdir(documentsOutput, { recursive: true });
+await mkdir(brandOutput, { recursive: true });
 for (const [filename, slug] of Object.entries(images)) {
   const source = path.join(input, filename);
   const metadata = await sharp(source).metadata();
@@ -39,12 +42,24 @@ await sharp(path.join(input, 'Joy-cafe-hero.webp'))
   .resize({ width: 480, height: 748, fit: 'cover', position: 'centre' })
   .avif({ quality: 38, effort: 7 })
   .toFile(path.join(output, 'joy-cafe-melbourn-interior-mobile.avif'));
-await copyFile(path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-open-graph-1200x630.png'), path.join(root, 'assets', 'brand', 'joy-open-graph-1200x630.png'));
-await copyFile(path.join(root, 'Media and Files', 'logo', 'Joy Cafe Main Logo.svg'), path.join(root, 'assets', 'brand', 'joy-main-logo.svg'));
+await sharp(path.join(brandInput, 'opengraph.png')).resize(1200, 630, { fit: 'fill' }).png({ compressionLevel: 9 }).toFile(path.join(brandOutput, 'joy-open-graph-1200x630.png'));
+await sharp(path.join(brandInput, 'opengraph.webp')).resize(1200, 630, { fit: 'fill' }).webp({ quality: 90 }).toFile(path.join(brandOutput, 'joy-open-graph-1200x630.webp'));
+await copyFile(path.join(brandInput, 'Joy Cafe Main Logo.svg'), path.join(brandOutput, 'joy-main-logo.svg'));
 await copyFile(path.join(root, 'Media and Files', 'images', 'marble bg.webp'), path.join(output, 'marble-bg.webp'));
 await copyFile(path.join(root, 'Media and Files', 'Joy Wine List.pdf'), path.join(documentsOutput, 'joy-wine-list.pdf'));
-const faviconSource = path.join(root, 'Media and Files', 'logo', 'joy-logo-pack', 'joy-favicon-512.png');
-await copyFile(faviconSource, path.join(root, 'assets', 'brand', 'joy-favicon-512.png'));
+const faviconSource = path.join(brandInput, 'joy-favicon.png');
+await sharp(faviconSource).resize(720, 720, { fit: 'fill' }).png({ compressionLevel: 9 }).toFile(path.join(brandOutput, 'joy-favicon.png'));
+await sharp(path.join(brandInput, 'joy-favicon.webp')).resize(720, 720, { fit: 'fill' }).webp({ quality: 90 }).toFile(path.join(brandOutput, 'joy-favicon.webp'));
+await Promise.all([
+  [512, 'joy-favicon-512.png'],
+  [192, 'joy-favicon-192.png'],
+  [180, 'apple-touch-icon.png'],
+  [152, 'apple-touch-icon-152x152.png'],
+  [120, 'apple-touch-icon-120x120.png']
+].map(([size, filename]) => sharp(faviconSource)
+  .resize(size, size, { fit: 'contain' })
+  .png({ compressionLevel: 9 })
+  .toFile(path.join(brandOutput, filename))));
 
 const faviconSizes = [16, 32, 48];
 const faviconImages = await Promise.all(faviconSizes.map((size) => sharp(faviconSource)

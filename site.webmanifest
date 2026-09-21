@@ -8,9 +8,19 @@
   "theme_color": "#fbfaf6",
   "icons": [
     {
+      "src": "/assets/brand/joy-favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
       "src": "/assets/brand/joy-favicon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/assets/brand/joy-favicon.webp",
+      "sizes": "720x720",
+      "type": "image/webp"
     }
   ]
 }
