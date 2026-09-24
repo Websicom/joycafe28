@@ -28,6 +28,10 @@ assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, 
 
 const valid = { name: 'Alex Example', partySize: '2', date: '2026-09-09', time: '12:00', email: 'alex@example.com', phone: '07123 456789', requests: 'Gluten free', turnstileToken: 'test-token', website: '' };
 assert.equal(validateReservation(valid, { now }).valid, true, 'Valid reservation should pass');
+for (const phone of ['1', '07968 953398', '+44 (0) 7968 953398', '01763/230140', '01763 230140 ext 2']) {
+  assert.equal(validateReservation({ ...valid, phone }, { now }).valid, true, `Phone entry should be accepted: ${phone}`);
+}
+assert.ok(validateReservation({ ...valid, phone: '   ' }, { now }).errors.phone, 'Phone is still required');
 assert.equal(validateReservation({ ...valid, time: '13:45' }, { now }).valid, true, 'The final Wednesday slot should be accepted');
 assert.equal(validateReservation({ ...valid, time: '14:00' }, { now }).errors.time.length > 0, true, 'Times after the final Wednesday slot should fail');
 assert.equal(validateReservation({ ...valid, date: '2026-09-04' }, { now }).errors.date.length > 0, true, 'Past dates should fail');

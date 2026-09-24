@@ -1,4 +1,4 @@
-import { formatDate, formatTime, validateReservation } from '/shared/reservations.js?v=20260924';
+import { formatDate, formatTime, validateReservation } from '/shared/reservations.js?v=20260924c';
 
 const fieldIds = { name: 'booking-name', partySize: 'party-size', date: 'booking-date', time: 'booking-time', email: 'booking-email', phone: 'booking-phone', requests: 'booking-requests' };
 const failureMessage = 'Your request has not been sent. Please try again or call Joy Café on 01763 230140.';

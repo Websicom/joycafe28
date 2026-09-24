@@ -101,7 +101,6 @@ export function getDisplayHours() {
 const cleanSingleLine = (value) => String(value ?? '').trim().replace(/\s+/g, ' ');
 const cleanMultiline = (value) => String(value ?? '').trim().replace(/\r\n?/g, '\n').replace(/[\t ]+/g, ' ');
 const validEmail = /^[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+$/;
-const validPhone = /^[+()\d][+()\d\s.-]{5,39}$/;
 
 export function validateReservation(input, { now = new Date(), availability } = {}) {
   const limits = RESERVATION_CONFIG.limits;
@@ -125,7 +124,8 @@ export function validateReservation(input, { now = new Date(), availability } = 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value.date) || value.date <= today || value.date > lastDate || slots.length === 0) errors.date = value.date === today ? 'For a table today, please call 01763 230140. Online requests must be for a later day.' : 'Please choose an available future date.';
   if (!errors.date && !slots.includes(value.time)) errors.time = 'Please choose one of the available times for this date.';
   if (!value.email || value.email.length > limits.email || !validEmail.test(value.email)) errors.email = 'Please enter a valid email address.';
-  if (!value.phone || value.phone.length > limits.phone || !validPhone.test(value.phone)) errors.phone = 'Please enter a valid phone number.';
+  if (!value.phone) errors.phone = 'Please enter your phone number.';
+  else if (value.phone.length > limits.phone) errors.phone = `Please keep your phone number to ${limits.phone} characters or fewer.`;
   if (value.requests.length > limits.requests) errors.requests = `Please keep requests to ${limits.requests} characters or fewer.`;
   return { valid: Object.keys(errors).length === 0 && !value.website, errors, value };
 }

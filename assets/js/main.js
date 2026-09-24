@@ -1,6 +1,6 @@
 import { initNavigation } from './navigation.js';
 import { initTheme } from './theme.js';
-import { initBooking } from './booking.js?v=20260924b';
+import { initBooking } from './booking.js?v=20260924c';
 import { initAnnouncements } from './announcements.js';
 import { initMap } from './map.js';
 import { initFaq } from './faq.js';
