@@ -1,6 +1,6 @@
 export const RESERVATION_CONFIG = Object.freeze({
   timeZone: 'Europe/London',
-  slotMinutes: 15,
+  slotMinutes: 30,
   bookingWindowDays: 90,
   partySize: { min: 1, max: 6 },
   limits: Object.freeze({ name: 100, email: 254, phone: 40, requests: 1000 }),
@@ -17,10 +17,10 @@ export const RESERVATION_CONFIG = Object.freeze({
     0: Object.freeze([]),
     1: Object.freeze([]),
     2: Object.freeze([]),
-    3: Object.freeze([{ start: '11:00', lastSlot: '13:45' }]),
-    4: Object.freeze([{ start: '11:00', lastSlot: '13:45' }, { start: '18:00', lastSlot: '20:45' }]),
-    5: Object.freeze([{ start: '11:00', lastSlot: '18:00' }]),
-    6: Object.freeze([{ start: '11:00', lastSlot: '13:30' }])
+    3: Object.freeze([{ start: '10:00', lastSlot: '14:00' }]),
+    4: Object.freeze([{ start: '10:00', lastSlot: '14:00' }, { start: '18:00', lastSlot: '21:00' }]),
+    5: Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '18:00' }]),
+    6: Object.freeze([{ start: '10:00', lastSlot: '14:00' }])
   })
 });
 
@@ -67,7 +67,7 @@ export function getReservationSlots(dateValue, { now = new Date(), excludePast =
     }
     return slots;
   });
-  return slots;
+  return [...new Set(slots)];
 }
 
 export function getOpenDates(now = new Date()) {

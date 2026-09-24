@@ -7,14 +7,16 @@ const now = new Date('2026-09-05T12:00:00Z');
 assert.equal(getLondonToday(new Date('2026-03-29T23:30:00Z')), '2026-03-30', 'London date should observe BST');
 assert.deepEqual(getReservationSlots('2026-09-06', { now }), [], 'Sunday should be closed');
 assert.deepEqual(getReservationSlots('2026-09-07', { now }), [], 'Monday should be closed');
-assert.deepEqual(getReservationSlots('2026-09-09', { now }), Array.from({ length: 12 }, (_, index) => `${String(11 + Math.floor(index / 4)).padStart(2, '0')}:${String((index % 4) * 15).padStart(2, '0')}`), 'Wednesday should offer 15-minute slots from 11:00 through 13:45');
-assert.equal(getReservationSlots('2026-09-10', { now }).at(11), '13:45', 'Thursday lunch reservations should end at 13:45');
-assert.equal(getReservationSlots('2026-09-10', { now }).at(12), '18:00', 'Thursday evening reservations should begin at 18:00');
-assert.equal(getReservationSlots('2026-09-10', { now }).at(-1), '20:45', 'Thursday evening reservations should end at 20:45');
-assert.equal(getReservationSlots('2026-09-11', { now })[0], '11:00', 'Friday reservations should begin at 11:00');
+assert.deepEqual(getReservationSlots('2026-09-09', { now }), Array.from({ length: 9 }, (_, index) => `${String(10 + Math.floor(index / 2)).padStart(2, '0')}:${String((index % 2) * 30).padStart(2, '0')}`), 'Wednesday should offer 30-minute slots from 10:00 through 14:00');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(8), '14:00', 'Thursday lunch reservations should end at 14:00');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(9), '18:00', 'Thursday evening reservations should begin at 18:00');
+assert.equal(getReservationSlots('2026-09-10', { now }).at(-1), '21:00', 'Thursday evening reservations should end at 21:00');
+assert.equal(getReservationSlots('2026-09-11', { now })[0], '10:00', 'Friday reservations should begin at 10:00');
+assert.equal(getReservationSlots('2026-09-11', { now }).filter((time) => time === '14:00').length, 1, 'Friday 14:00 should appear once across the two booking periods');
+assert.equal(getReservationSlots('2026-09-11', { now }).every((time) => time.endsWith(':00') || time.endsWith(':30')), true, 'Friday should use 30-minute intervals');
 assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:00', 'Friday reservations should end at 18:00');
-assert.equal(getReservationSlots('2026-09-12', { now })[0], '11:00', 'Saturday reservations should begin at 11:00');
-assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '13:30', 'Saturday reservations should end at 13:30');
+assert.equal(getReservationSlots('2026-09-12', { now })[0], '10:00', 'Saturday reservations should begin at 10:00');
+assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '14:00', 'Saturday reservations should end at 14:00');
 assert.deepEqual(getReservationSlots('2026-09-05', { now }), [], 'Same-day slots must not be offered');
 assert.equal(getOpenDates(now)[0], '2026-09-09', 'Open dates must exclude today');
 assert.deepEqual(getReservationSlots('2026-09-04', { now }), [], 'Past dates must have no slots');
@@ -32,8 +34,8 @@ for (const phone of ['1', '07968 953398', '+44 (0) 7968 953398', '01763/230140',
   assert.equal(validateReservation({ ...valid, phone }, { now }).valid, true, `Phone entry should be accepted: ${phone}`);
 }
 assert.ok(validateReservation({ ...valid, phone: '   ' }, { now }).errors.phone, 'Phone is still required');
-assert.equal(validateReservation({ ...valid, time: '13:45' }, { now }).valid, true, 'The final Wednesday slot should be accepted');
-assert.equal(validateReservation({ ...valid, time: '14:00' }, { now }).errors.time.length > 0, true, 'Times after the final Wednesday slot should fail');
+assert.equal(validateReservation({ ...valid, time: '14:00' }, { now }).valid, true, 'The final Wednesday slot should be accepted');
+assert.equal(validateReservation({ ...valid, time: '14:15' }, { now }).errors.time.length > 0, true, 'Times after the final Wednesday slot should fail');
 assert.equal(validateReservation({ ...valid, date: '2026-09-04' }, { now }).errors.date.length > 0, true, 'Past dates should fail');
 assert.equal(validateReservation({ ...valid, date: '2026-09-06' }, { now }).errors.date.length > 0, true, 'Closed dates should fail');
 assert.equal(validateReservation({ ...valid, time: '16:00' }, { now }).errors.time.length > 0, true, 'Closing time should fail');
@@ -100,7 +102,8 @@ assert.equal((await disabledConfigResponse.json()).enabled, false);
 // Every advertised slot must pass the same server validation; unavailable quarter-hours must fail.
 const auditNow = new Date('2026-09-24T08:00:00Z');
 const advertised = await (await handleReservation(new Request('https://example.test/'), env, { now: auditNow })).json();
-assert(advertised.availability['2026-09-25'].includes('12:15'), 'Reported Friday example must be available');
+assert(advertised.availability['2026-09-25'].includes('12:30'), 'Friday lunchtime slots must use the new 30-minute interval');
+assert(!advertised.availability['2026-09-25'].includes('12:15'), 'Old 15-minute Friday slots must no longer be advertised');
 for (const [date, slots] of Object.entries(advertised.availability)) {
   for (const time of slots) assert(validateReservation({ ...valid, date, time }, { now: auditNow }).valid, `${date} ${time} should validate`);
   for (const time of ['07:30', '10:45', '16:15', '21:00', '23:00']) {
