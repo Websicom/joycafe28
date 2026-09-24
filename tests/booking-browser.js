@@ -46,22 +46,25 @@
   fill();
   change('date', form.elements.date.options[2].value);
   check(form.elements.time.value === '', 'Changing date clears previous time');
-  fill();
-  submit(); submit();
-  check(button.disabled, 'Send button disables immediately');
-  await waitFor(() => !button.disabled);
-  check(posts === 1, 'Repeated submits send exactly once');
-  check(status.classList.contains('is-success') && getComputedStyle(status).backgroundColor === 'rgb(234, 246, 237)', 'Success has green background');
-  check(form.elements.name.value === '' && form.elements.time.disabled, 'Successful send resets fields and time');
-  check(document.activeElement === status, 'Success message receives focus');
   for (const failure of ['failure', 'invalid-json', 'network', 'fields']) {
     mode = failure; fill(); submit(); await waitFor(() => !button.disabled);
     check(status.classList.contains('is-error') && form.elements.name.value === 'LOCAL TEST ONLY', `${failure}: clear error and input preserved`);
+    check(form.elements.name.getClientRects().length > 0, 'Form remains visible after failure');
     if (failure === 'fields') check(document.activeElement.id === 'booking-phone', 'Server field error keeps focus on invalid field');
   }
-  mode = 'success'; fill(); submit(); await waitFor(() => !button.disabled);
+  mode = 'success'; fill();
+  const beforeSuccess = posts;
+  submit(); submit();
+  check(button.disabled, 'Send button disables immediately');
+  await waitFor(() => form.getAttribute('aria-busy') === 'false');
+  check(posts === beforeSuccess + 1, 'Repeated submits send exactly once');
   check(status.classList.contains('is-success'), 'Retry after failures works');
-  submit(); await waitFor(() => !button.disabled);
+  check(getComputedStyle(status).backgroundColor === 'rgb(234, 246, 237)', 'Success has green background');
+  check(form.elements.name.value === '', 'Successful send clears personal details');
+  check(form.elements.name.getClientRects().length === 0 && button.getClientRects().length === 0, 'Fields and send button disappear after success');
+  check(status.getClientRects().length > 0 && document.activeElement === status, 'Success remains visible and receives focus');
+  submit();
+  check(posts === beforeSuccess + 1, 'Completed form cannot submit again');
   window.fetch = originalFetch;
   return results;
 })()

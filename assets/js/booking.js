@@ -13,6 +13,7 @@ export async function initBooking() {
   const status = form.querySelector('#booking-status');
   let availability = {};
   let submitting = false;
+  let completed = false;
 
   const setStatus = (message = '', kind = '') => {
     status.textContent = message;
@@ -51,7 +52,7 @@ export async function initBooking() {
   };
   const setLoading = (loading) => {
     submitting = loading;
-    submitButton.disabled = loading;
+    submitButton.disabled = loading || completed;
     form.setAttribute('aria-busy', String(loading));
     buttonLabel.textContent = loading ? 'Sending request…' : 'Send reservation request';
   };
@@ -65,7 +66,7 @@ export async function initBooking() {
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (submitting) return;
+    if (submitting || completed) return;
     const clientPayload = Object.fromEntries(new FormData(form).entries());
     setLoading(true);
     try {
@@ -90,6 +91,8 @@ export async function initBooking() {
       refreshTimes();
       showErrors({});
       setStatus(result.message, 'success');
+      completed = true;
+      form.classList.add('is-complete');
       status.focus();
     } catch {
       setStatus(failureMessage, 'error');

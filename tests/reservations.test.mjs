@@ -115,6 +115,6 @@ const proxiedPost = await onRequestPost({ request: request(valid), env: proxyEnv
 assert.equal((await proxiedPost.json()).method, 'POST');
 
 const bookingScript = await (await import('node:fs/promises')).readFile(new URL('../assets/js/booking.js', import.meta.url), 'utf8');
-assert(bookingScript.includes('if (submitting) return;'), 'Client should prevent duplicate submissions');
+assert(bookingScript.includes('if (submitting || completed) return;'), 'Client should prevent duplicate submissions');
 assert(!bookingScript.includes('turnstile'), 'Client must not load human verification');
 console.log('Reservation tests passed: advertised hours, same-day/DST restrictions, validation, delivery failures, honeypot, rate limits and proxy responses.');

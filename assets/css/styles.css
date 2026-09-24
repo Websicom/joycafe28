@@ -152,3 +152,5 @@ body[data-theme="night"] .brand img,body[data-theme="night"] .footer-brand img{f
 .booking-status.is-error::before{content:"Request not sent";display:block;font-size:1rem;font-weight:800;margin-bottom:.3rem}
 .booking-status.is-success::before{content:"Request sent successfully";display:block;font-size:1rem;font-weight:800;margin-bottom:.3rem}
 body[data-theme="night"] .booking-form .field-error{color:#ffb4ab!important}
+.booking-form.is-complete > :not(.booking-status){display:none!important}
+.booking-form.is-complete{display:block}
