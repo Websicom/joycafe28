@@ -1,24 +1,7 @@
-import { formatDate, formatTime, getOpenDates, getReservationSlots, validateReservation } from '/shared/reservations.js';
+import { formatDate, formatTime, validateReservation } from '/shared/reservations.js?v=20260924';
 
 const fieldIds = { name: 'booking-name', partySize: 'party-size', date: 'booking-date', time: 'booking-time', email: 'booking-email', phone: 'booking-phone', requests: 'booking-requests' };
-
-const loadTurnstile = () => new Promise((resolve, reject) => {
-  if (window.turnstile) return resolve(window.turnstile);
-  const existing = document.querySelector('script[data-joy-turnstile]');
-  if (existing) {
-    existing.addEventListener('load', () => resolve(window.turnstile), { once: true });
-    existing.addEventListener('error', reject, { once: true });
-    return;
-  }
-  const script = document.createElement('script');
-  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-  script.async = true;
-  script.defer = true;
-  script.dataset.joyTurnstile = '';
-  script.onload = () => resolve(window.turnstile);
-  script.onerror = reject;
-  document.head.append(script);
-});
+const failureMessage = 'Your request has not been sent. Please try again or call Joy Café on 01763 230140.';
 
 export async function initBooking() {
   const form = document.querySelector('#booking-form');
@@ -28,11 +11,8 @@ export async function initBooking() {
   const dateSelect = form.elements.date;
   const timeSelect = form.elements.time;
   const status = form.querySelector('#booking-status');
-  const turnstileHost = form.querySelector('#booking-turnstile');
-  let turnstileToken = '';
-  let widgetId;
+  let availability = {};
   let submitting = false;
-  let turnstileSetup;
 
   const setStatus = (message = '', kind = '') => {
     status.textContent = message;
@@ -41,112 +21,87 @@ export async function initBooking() {
   const setFieldError = (name, message = '') => {
     const field = form.querySelector(`#${fieldIds[name]}`);
     const error = form.querySelector(`#${fieldIds[name]}-error`);
-    if (!field || !error) return;
     error.textContent = message;
-    field.toggleAttribute('aria-invalid', Boolean(message));
+    if (message) field.setAttribute('aria-invalid', 'true');
+    else field.removeAttribute('aria-invalid');
   };
   const showErrors = (errors) => {
     Object.keys(fieldIds).forEach((name) => setFieldError(name, errors[name] || ''));
     const first = Object.keys(fieldIds).find((name) => errors[name]);
-    if (first) form.querySelector(`#${fieldIds[first]}`)?.focus();
+    if (first) form.elements[first].focus();
+    return Boolean(first);
   };
-  const payload = () => Object.fromEntries(new FormData(form).entries());
+  const refreshTimes = () => {
+    timeSelect.replaceChildren(new Option(dateSelect.value ? 'Choose a time' : 'Choose a date first', ''));
+    (availability[dateSelect.value] || []).forEach((time) => timeSelect.add(new Option(formatTime(time), time)));
+    timeSelect.disabled = !dateSelect.value;
+  };
+  const loadAvailability = async () => {
+    const response = await fetch('/api/reservations', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
+    const result = await response.json();
+    if (!response.ok || !result.enabled || !result.availability) throw new Error('unavailable');
+    availability = result.availability;
+    const selectedDate = dateSelect.value;
+    const selectedTime = timeSelect.value;
+    dateSelect.replaceChildren(new Option('Choose a date', ''));
+    Object.keys(availability).forEach((date) => dateSelect.add(new Option(formatDate(date), date)));
+    dateSelect.value = availability[selectedDate] ? selectedDate : '';
+    refreshTimes();
+    if (availability[dateSelect.value]?.includes(selectedTime)) timeSelect.value = selectedTime;
+  };
   const setLoading = (loading) => {
     submitting = loading;
-    submitButton.disabled = loading || !turnstileToken;
+    submitButton.disabled = loading;
     form.setAttribute('aria-busy', String(loading));
     buttonLabel.textContent = loading ? 'Sending request…' : 'Send reservation request';
   };
-  const resetTurnstile = () => {
-    turnstileToken = '';
-    if (window.turnstile && widgetId !== undefined) window.turnstile.reset(widgetId);
-    setLoading(false);
-  };
-  const completeTurnstile = () => {
-    turnstileToken = '';
-    if (window.turnstile && widgetId !== undefined) window.turnstile.remove(widgetId);
-    widgetId = undefined;
-    turnstileHost.replaceChildren();
-    turnstileHost.hidden = true;
-    setLoading(false);
-  };
 
-  getOpenDates().forEach((date) => dateSelect.add(new Option(formatDate(date), date)));
   dateSelect.addEventListener('change', () => {
     setFieldError('date');
     setFieldError('time');
-    timeSelect.replaceChildren(new Option(dateSelect.value ? 'Choose a time' : 'Choose a date first', ''));
-    getReservationSlots(dateSelect.value).forEach((time) => timeSelect.add(new Option(formatTime(time), time)));
-    timeSelect.disabled = !dateSelect.value;
+    refreshTimes();
   });
-  Object.keys(fieldIds).forEach((name) => form.elements[name]?.addEventListener('input', () => setFieldError(name)));
-
-  const initialiseTurnstile = () => {
-    if (turnstileSetup) return turnstileSetup;
-    turnstileSetup = (async () => {
-      try {
-        const configResponse = await fetch('/api/reservations', { cache: 'no-store' });
-        const config = await configResponse.json();
-        if (!configResponse.ok || !config.enabled || !config.siteKey) throw new Error('Reservation service is not configured.');
-        const turnstile = await loadTurnstile();
-        turnstileHost.hidden = false;
-        turnstileHost.replaceChildren();
-        widgetId = turnstile.render(turnstileHost, {
-          sitekey: config.siteKey,
-          action: 'reservation_request',
-          theme: 'auto',
-          appearance: 'interaction-only',
-          callback: (token) => { turnstileToken = token; setLoading(false); },
-          'expired-callback': resetTurnstile,
-          'error-callback': resetTurnstile
-        });
-      } catch {
-        turnstileHost.hidden = false;
-        turnstileHost.innerHTML = '<p>Online reservation requests are temporarily unavailable. Please call <a href="tel:01763230140">01763 230140</a>.</p>';
-        setStatus('Online reservation requests are temporarily unavailable. Please call Joy Café on 01763 230140.', 'error');
-      }
-    })();
-    return turnstileSetup;
-  };
-  const activateTurnstile = (event) => {
-    if (!event.isTrusted) return;
-    form.removeEventListener('pointerdown', activateTurnstile);
-    form.removeEventListener('keydown', activateTurnstile);
-    void initialiseTurnstile();
-  };
-  form.addEventListener('pointerdown', activateTurnstile);
-  form.addEventListener('keydown', activateTurnstile);
+  Object.keys(fieldIds).forEach((name) => form.elements[name].addEventListener('input', () => setFieldError(name)));
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (submitting) return;
-    const clientPayload = { ...payload(), turnstileToken };
-    const validation = validateReservation(clientPayload);
-    showErrors(validation.errors);
-    if (!validation.valid) {
-      setStatus('Please check the highlighted fields.', 'error');
-      return;
-    }
-    setStatus('Sending your reservation request…');
+    const clientPayload = Object.fromEntries(new FormData(form).entries());
     setLoading(true);
     try {
+      // Refresh in case the form was left open overnight or hours changed.
+      await loadAvailability();
+      const validation = validateReservation(clientPayload, { availability });
+      showErrors(validation.errors);
+      if (!validation.valid) {
+        setStatus('Request not sent. Please correct the fields marked in red.', 'error');
+        return;
+      }
+      setStatus('Sending your reservation request…');
       const response = await fetch('/api/reservations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clientPayload) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) {
-        if (result.fields) showErrors(result.fields);
-        throw new Error(result.message || 'We could not send your reservation request. Please try again or call Joy Café on 01763 230140.');
+        const hasFieldErrors = result.fields && showErrors(result.fields);
+        setStatus(hasFieldErrors ? 'Request not sent. Please correct the fields marked in red.' : failureMessage, 'error');
+        if (!hasFieldErrors) status.focus();
+        return;
       }
       form.reset();
-      timeSelect.replaceChildren(new Option('Choose a date first', ''));
-      timeSelect.disabled = true;
+      refreshTimes();
       showErrors({});
       setStatus(result.message, 'success');
       status.focus();
-      completeTurnstile();
-    } catch (error) {
-      setStatus(error.message || 'We could not send your reservation request. Please try again or call Joy Café on 01763 230140.', 'error');
+    } catch {
+      setStatus(failureMessage, 'error');
       status.focus();
-      resetTurnstile();
+    } finally {
+      setLoading(false);
     }
   });
+
+  try {
+    await loadAvailability();
+  } catch {
+    setStatus('Unable to load reservation dates. Please refresh the page or call 01763 230140.', 'error');
+  }
 }

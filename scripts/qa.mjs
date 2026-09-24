@@ -47,7 +47,7 @@ assert(homepage.includes('<h2 id="final-title">Created with Joy<br>to bring you 
 assert(!homepage.includes('<h3>Add Halloumi</h3>') && homepage.includes('Add halloumi £3.50'), 'index.html: halloumi should appear only within the salad description');
 assert(homepage.includes('<h3>Warm Banana Bread</h3>') && homepage.includes('<h3>Baron Bigod</h3>') && homepage.includes('<h3>Breads</h3><p class="price">£2.00 each</p>') && homepage.includes('<h3>Affogato</h3><p class="price">£6.00</p>'), 'index.html: day and evening menus should contain the attached current items');
 assert(!homepage.includes('Cheese &amp; charcuterie boards are available to pre-order') && !homepage.includes('class="menu-note"'), 'index.html: pre-order note and its bordered container should be removed');
-assert(homepage.includes('<div class="booking-turnstile" id="booking-turnstile" hidden></div>'), 'index.html: Turnstile should remain unloaded until a visitor uses the booking form');
+assert(!homepage.includes('id="booking-turnstile"'), 'index.html: human verification widget should be removed');
 assert(homepage.includes('<h2 id="night-title">Thursday evenings at joy.</h2>') && homepage.includes('<li>Good food</li><li>Good wine</li><li>Good company</li>'), 'index.html: evening introduction should use the new Thursday heading and three themes');
 assert(homepage.includes('Thursday 6pm – 9pm') && !homepage.includes('Friday 2pm – 6pm'), 'index.html: evening availability should be Thursday only');
 assert(homepage.includes('Discover something different') && homepage.includes('organic, biodynamic and very tasty!'), 'index.html: wine introduction should use the new client copy');
@@ -58,7 +58,7 @@ assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
 assert(homepage.includes('id="booking-name"') && homepage.includes('id="booking-date"') && homepage.includes('id="booking-time"') && homepage.includes('Send reservation request'), 'index.html: reservation request form needs all key fields and its submit action');
-assert(homepage.includes('id="booking-email"') && homepage.includes('id="booking-phone"') && homepage.includes('id="booking-requests"') && homepage.includes('id="booking-turnstile"'), 'index.html: reservation form needs contact, requests and Turnstile fields');
+assert(homepage.includes('id="booking-email"') && homepage.includes('id="booking-phone"') && homepage.includes('id="booking-requests"'), 'index.html: reservation form needs contact and requests fields');
 assert(!homepage.includes('booking-service') && !homepage.includes('Find a table'), 'index.html: old SumUp controls should be removed');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');

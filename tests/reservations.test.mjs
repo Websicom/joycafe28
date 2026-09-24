@@ -15,8 +15,14 @@ assert.equal(getReservationSlots('2026-09-11', { now })[0], '11:00', 'Friday res
 assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:00', 'Friday reservations should end at 18:00');
 assert.equal(getReservationSlots('2026-09-12', { now })[0], '11:00', 'Saturday reservations should begin at 11:00');
 assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '13:30', 'Saturday reservations should end at 13:30');
-assert.equal(getReservationSlots('2026-09-05', { now })[0], '13:15', 'Past times on the current open day should not be offered in Europe/London');
-assert.equal(getOpenDates(now)[0], '2026-09-05', 'Open dates should include today when open');
+assert.deepEqual(getReservationSlots('2026-09-05', { now }), [], 'Same-day slots must not be offered');
+assert.equal(getOpenDates(now)[0], '2026-09-09', 'Open dates must exclude today');
+assert.deepEqual(getReservationSlots('2026-09-04', { now }), [], 'Past dates must have no slots');
+assert.deepEqual(getReservationSlots('2026-02-31', { now, excludePast: false }), [], 'Impossible dates must be rejected');
+for (const instant of ['2026-03-28T23:30:00Z', '2026-03-29T23:30:00Z', '2026-10-24T23:30:00Z', '2026-10-25T23:30:00Z']) {
+  const clock = new Date(instant);
+  assert(getOpenDates(clock).every((date) => date > getLondonToday(clock)), 'No same-day bookings around DST transitions');
+}
 assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Wednesday').times, ['7:30am – 4pm'], 'Public opening hours should remain unchanged');
 assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, ['7:30am – 4pm', '6pm – 11pm'], 'Public Thursday opening hours should remain unchanged');
 
@@ -42,7 +48,6 @@ for (const value of ['Alex Example', '2', 'Wednesday, 9 September 2026', '12:00p
 
 let sent;
 const env = {
-  TURNSTILE_SITE_KEY: 'site-key', TURNSTILE_SECRET_KEY: 'secret',
   GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/test-deployment/exec',
   GOOGLE_APPS_SCRIPT_SECRET: '12345678901234567890123456789012',
   BOOKING_RATE_LIMITER: { limit: async () => ({ success: true }) },
@@ -60,21 +65,44 @@ assert.equal(sent.secret, '12345678901234567890123456789012', 'Worker should aut
 assert.equal(sent.reservation.email, valid.email, 'Worker should forward the validated customer address');
 
 sent = undefined;
-const turnstileFailure = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ success: false }) });
-assert.equal(turnstileFailure.status, 400, 'Failed Turnstile should be rejected');
-assert.equal(sent, undefined, 'Failed Turnstile must not send email');
+const deliveryFailure = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ ok: false }) });
+assert.equal(deliveryFailure.status, 502, 'Failed mail delivery must not show success');
+assert.equal(sent, undefined);
 
 const validationFailure = await handleReservation(request({ ...valid, partySize: 99 }), env, { now, fetch: async () => Response.json({ success: true }) });
 assert.equal(validationFailure.status, 422, 'Server should reject altered fields');
 assert.ok((await validationFailure.json()).fields.partySize);
 
-const duplicateToken = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ success: false, 'error-codes': ['timeout-or-duplicate'] }) });
-assert.equal(duplicateToken.status, 400, 'Replayed Turnstile token should be rejected');
+const limited = await handleReservation(request(valid), { ...env, BOOKING_RATE_LIMITER: { limit: async () => ({ success: false }) } }, { now, fetch: successfulFetch });
+assert.equal(limited.status, 429, 'Rate limiting should remain in place');
+const sameDay = await handleReservation(request({ ...valid, date: '2026-09-05', time: '13:15' }), env, { now, fetch: successfulFetch });
+assert.equal(sameDay.status, 422);
+assert.match((await sameDay.json()).fields.date, /call 01763/);
+const honeypot = await handleReservation(request({ ...valid, website: 'spam.example' }), env, { now, fetch: async () => { throw new Error('Honeypot must not send mail'); } });
+assert.equal(honeypot.status, 200);
+const tooLong = await handleReservation(request({ ...valid, requests: 'x'.repeat(17000) }), env, { now, fetch: successfulFetch });
+assert.equal(tooLong.status, 413);
+const badJson = await handleReservation(new Request('https://example.test/', { method: 'POST', body: '{' }), env, { now, fetch: successfulFetch });
+assert.equal(badJson.status, 400);
 
 const configResponse = await handleReservation(new Request('https://example.test/'), env);
-assert.deepEqual(await configResponse.json(), { enabled: true, siteKey: 'site-key' });
+const config = await configResponse.json();
+assert.equal(config.enabled, true);
+assert.ok(config.availability);
+assert.equal(config.siteKey, undefined);
 const disabledConfigResponse = await handleReservation(new Request('https://example.test/'), { ...env, GOOGLE_APPS_SCRIPT_URL: '' });
-assert.deepEqual(await disabledConfigResponse.json(), { enabled: false, siteKey: 'site-key' });
+assert.equal((await disabledConfigResponse.json()).enabled, false);
+
+// Every advertised slot must pass the same server validation; unavailable quarter-hours must fail.
+const auditNow = new Date('2026-09-24T08:00:00Z');
+const advertised = await (await handleReservation(new Request('https://example.test/'), env, { now: auditNow })).json();
+assert(advertised.availability['2026-09-25'].includes('12:15'), 'Reported Friday example must be available');
+for (const [date, slots] of Object.entries(advertised.availability)) {
+  for (const time of slots) assert(validateReservation({ ...valid, date, time }, { now: auditNow }).valid, `${date} ${time} should validate`);
+  for (const time of ['07:30', '10:45', '16:15', '21:00', '23:00']) {
+    if (!slots.includes(time)) assert(validateReservation({ ...valid, date, time }, { now: auditNow }).errors.time);
+  }
+}
 
 const proxyEnv = { BOOKING_SERVICE: { fetch: async (proxied) => Response.json({ method: proxied.method, clientIp: proxied.headers.get('X-Client-IP') }) } };
 const proxiedGet = await onRequestGet({ request: new Request('https://example.test/api/reservations', { headers: { 'CF-Connecting-IP': '192.0.2.2' } }), env: proxyEnv });
@@ -84,7 +112,5 @@ assert.equal((await proxiedPost.json()).method, 'POST');
 
 const bookingScript = await (await import('node:fs/promises')).readFile(new URL('../assets/js/booking.js', import.meta.url), 'utf8');
 assert(bookingScript.includes('if (submitting) return;'), 'Client should prevent duplicate submissions');
-assert(bookingScript.includes("form.addEventListener('pointerdown', activateTurnstile)") && bookingScript.includes("form.addEventListener('keydown', activateTurnstile)") && bookingScript.includes('if (!event.isTrusted) return;'), 'Client should defer Turnstile until real form interaction');
-assert(bookingScript.includes("'expired-callback': resetTurnstile") && bookingScript.includes("'error-callback': resetTurnstile"), 'Client should recover from Turnstile expiry and errors');
-assert(bookingScript.includes('turnstile.remove(widgetId)') && bookingScript.includes('completeTurnstile();'), 'Client should remove Turnstile after a successful submission');
-console.log('Reservation tests passed: hours, validation, Turnstile, email payload, proxy responses and duplicate prevention.');
+assert(!bookingScript.includes('turnstile'), 'Client must not load human verification');
+console.log('Reservation tests passed: advertised hours, same-day/DST restrictions, validation, delivery failures, honeypot, rate limits and proxy responses.');

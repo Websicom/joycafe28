@@ -39,7 +39,7 @@
   <style>{{INLINE_CSS}}</style>
   <script type="application/ld+json">{{LOCAL_BUSINESS_JSONLD}}</script>
   <script type="application/ld+json">{{FAQ_JSONLD}}</script>
-  <script type="module" src="/assets/js/main.js"></script>
+  <script type="module" src="/assets/js/main.js?v=20260924"></script>
 </head>
 <body data-theme="day">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -106,6 +106,7 @@
         <h2 id="booking-title">Book a table</h2>
         <p>If you’d like to book a table at joy, please fill in the form below.</p>
         <p class="booking-note">We have limited seating, so booking is recommended for evenings. If you have any questions, feel free to give us a call on <a href="tel:01763230140"><strong>01763 230140</strong></a> — we’d be happy to help.</p>
+        <p class="booking-note"><strong>For a table today, please call <a href="tel:01763230140">01763 230140</a>.</strong> Online reservation requests must be made at least the day before your visit.</p>
       </div>
       <form class="booking-form" id="booking-form" data-reveal="right" novalidate>
         <div class="booking-field"><label for="booking-name">Name</label><input id="booking-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="booking-name-error"><p class="field-error" id="booking-name-error"></p></div>
@@ -116,7 +117,6 @@
         <div class="booking-field"><label for="booking-phone">Phone</label><input id="booking-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" required aria-describedby="booking-phone-error"><p class="field-error" id="booking-phone-error"></p></div>
         <div class="booking-field booking-field-wide"><label for="booking-requests">Dietaries, allergies or any special requests</label><textarea id="booking-requests" name="requests" rows="4" maxlength="1000" aria-describedby="booking-requests-error"></textarea><p class="field-error" id="booking-requests-error"></p></div>
         <div class="booking-honeypot" aria-hidden="true"><label for="booking-website">Website</label><input id="booking-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-        <div class="booking-turnstile" id="booking-turnstile" hidden></div>
         <button class="button" type="submit" disabled><span class="button-label">Send reservation request</span><svg class="link-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M7 4h9v9"></path></svg></button>
         <p id="booking-status" class="booking-status" role="status" aria-live="polite" tabindex="-1"></p>
       </form>

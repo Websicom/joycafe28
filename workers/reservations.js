@@ -1,4 +1,4 @@
-import { formatDate, formatTime, validateReservation } from '../shared/reservations.js';
+import { formatDate, formatTime, getOpenDates, getReservationSlots, validateReservation } from '../shared/reservations.js';
 
 const SUCCESS_MESSAGE = 'Thank you. Your reservation request has been sent to Joy Café. If there are any issues with your reservation, our team will get in touch.';
 const PUBLIC_ERROR = 'We could not send your reservation request. Please try again or call Joy Café on 01763 230140.';
@@ -24,18 +24,6 @@ export function buildReservationEmail(value) {
     text,
     html: `<div style="font-family:Arial,sans-serif;color:#272a22;max-width:680px"><h1 style="font-size:24px">New table reservation request</h1><table style="width:100%;border-collapse:collapse">${htmlRows}</table><p style="margin-top:18px"><strong>This is a reservation request, not an automatic confirmation.</strong></p></div>`
   };
-}
-
-async function verifyTurnstile(token, request, secret, fetcher) {
-  if (!secret) return false;
-  const remoteip = request.headers.get('X-Client-IP') || request.headers.get('CF-Connecting-IP') || undefined;
-  const response = await fetcher('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ secret, response: token, remoteip, idempotency_key: crypto.randomUUID() })
-  });
-  if (!response.ok) return false;
-  const result = await response.json();
-  return result.success === true && (!result.action || result.action === 'reservation_request');
 }
 
 async function sendViaGoogleAppsScript(value, env, fetcher) {
@@ -66,12 +54,15 @@ async function sendViaGoogleAppsScript(value, env, fetcher) {
 
 export async function handleReservation(request, env, runtime = { fetch }) {
   if (request.method === 'GET') {
-    return json({ enabled: Boolean(env.TURNSTILE_SITE_KEY && googleWebhookConfigured(env)), siteKey: env.TURNSTILE_SITE_KEY || null });
+    const now = runtime.now || new Date();
+    return json({ enabled: googleWebhookConfigured(env), availability: Object.fromEntries(getOpenDates(now).map((date) => [date, getReservationSlots(date, { now })])) });
   }
   if (request.method !== 'POST') return json({ ok: false, message: PUBLIC_ERROR }, 405);
   const length = Number(request.headers.get('Content-Length') || 0);
   if (length > 16_384) return json({ ok: false, message: PUBLIC_ERROR }, 413);
-  if (!googleWebhookConfigured(env) || !env.TURNSTILE_SECRET_KEY) return json({ ok: false, message: PUBLIC_ERROR }, 503);
+  if (!googleWebhookConfigured(env)) return json({ ok: false, message: PUBLIC_ERROR }, 503);
+  const origin = request.headers.get('Origin');
+  if (origin && !['https://joycafe28.com', 'https://www.joycafe28.com', 'https://joycafe28.pages.dev'].includes(origin)) return json({ ok: false, message: PUBLIC_ERROR }, 403);
 
   const ip = request.headers.get('X-Client-IP') || request.headers.get('CF-Connecting-IP') || 'unknown';
   if (env.BOOKING_RATE_LIMITER?.limit) {
@@ -85,10 +76,6 @@ export async function handleReservation(request, env, runtime = { fetch }) {
   const validation = validateReservation(input, { now: runtime.now || new Date() });
   if (validation.value.website) return json({ ok: true, message: SUCCESS_MESSAGE });
   if (!validation.valid) return json({ ok: false, message: 'Please check the highlighted fields.', fields: validation.errors }, 422);
-
-  let verified = false;
-  try { verified = await verifyTurnstile(validation.value.turnstileToken, request, env.TURNSTILE_SECRET_KEY, runtime.fetch); } catch { verified = false; }
-  if (!verified) return json({ ok: false, message: PUBLIC_ERROR, verificationFailed: true }, 400);
 
   try {
     await sendViaGoogleAppsScript(validation.value, env, runtime.fetch);
