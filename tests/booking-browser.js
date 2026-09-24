@@ -11,7 +11,7 @@
     throw new Error('Timed out waiting for form');
   };
   const change = (name, value) => { form.elements[name].value = value; form.elements[name].dispatchEvent(new Event('input', { bubbles: true })); form.elements[name].dispatchEvent(new Event('change', { bubbles: true })); };
-  const submit = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  const submit = () => button.click();
   const originalFetch = window.fetch;
   let posts = 0;
   let mode = 'success';
@@ -26,6 +26,7 @@
     return originalFetch(url, options);
   };
   await waitFor(() => form.elements.date.options.length > 1);
+  check(!button.disabled, 'Send button is usable immediately after loading');
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   check([...form.elements.date.options].filter((o) => o.value).every((o) => o.value > today), 'Only future dates offered');
   check(!document.querySelector('iframe[src*="cloudflare"],script[src*="challenges.cloudflare"]'), 'No human verification loaded');

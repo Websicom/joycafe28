@@ -99,6 +99,7 @@ export async function initBooking() {
     }
   });
 
+  setLoading(false);
   try {
     await loadAvailability();
   } catch {
