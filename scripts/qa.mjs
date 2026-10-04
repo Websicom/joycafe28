@@ -22,6 +22,9 @@ for (const page of pages) {
 }
 
 const homepage = await readFile(path.join(root, 'index.html'), 'utf8');
+const claritudeTag = '<script defer src="https://app.claritude.io/c.js" data-property="cl_49ca68b3acff4554bdc674faf0bd8af9"></script>';
+assert(homepage.includes(claritudeTag) && homepage.indexOf(claritudeTag) < homepage.indexOf('</head>'), 'index.html: Claritude tracking must be present once in the document head');
+assert(homepage.split(claritudeTag).length === 2, 'index.html: Claritude tracking must not be duplicated');
 const themeScript = await readFile(path.join(root, 'assets', 'js', 'theme.js'), 'utf8');
 for (const match of homepage.matchAll(/<img\s+([^>]+)>/g)) {
   assert(/\salt="[^"]*"/.test(` ${match[1]}`), `index.html: image missing alt text`);
