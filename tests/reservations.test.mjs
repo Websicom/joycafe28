@@ -14,7 +14,7 @@ assert.equal(getReservationSlots('2026-09-10', { now }).at(-1), '21:00', 'Thursd
 assert.equal(getReservationSlots('2026-09-11', { now })[0], '10:00', 'Friday reservations should begin at 10:00');
 assert.equal(getReservationSlots('2026-09-11', { now }).filter((time) => time === '14:00').length, 1, 'Friday 14:00 should appear once across the two booking periods');
 assert.equal(getReservationSlots('2026-09-11', { now }).every((time) => time.endsWith(':00') || time.endsWith(':30')), true, 'Friday should use 30-minute intervals');
-assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:00', 'Friday reservations should end at 18:00');
+assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:30', 'Friday reservations should include the additional 18:30 slot');
 assert.equal(getReservationSlots('2026-09-12', { now })[0], '10:00', 'Saturday reservations should begin at 10:00');
 assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '14:00', 'Saturday reservations should end at 14:00');
 assert.deepEqual(getReservationSlots('2026-09-05', { now }), [], 'Same-day slots must not be offered');
@@ -25,8 +25,9 @@ for (const instant of ['2026-03-28T23:30:00Z', '2026-03-29T23:30:00Z', '2026-10-
   const clock = new Date(instant);
   assert(getOpenDates(clock).every((date) => date > getLondonToday(clock)), 'No same-day bookings around DST transitions');
 }
-assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Wednesday').times, ['7:30am – 4pm'], 'Public opening hours should remain unchanged');
-assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, ['7:30am – 4pm', '6pm – 11pm'], 'Public Thursday opening hours should remain unchanged');
+assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Wednesday').times, ['8am – 4pm'], 'Public Wednesday opening hours should use the new 8am start');
+assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, ['8am – 4pm', '6pm – 11pm'], 'Public Thursday opening hours should use the new 8am start');
+assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Friday').times, ['8am – 8pm'], 'Public Friday opening hours should use the new 8am to 8pm hours');
 
 const valid = { name: 'Alex Example', partySize: '2', date: '2026-09-09', time: '12:00', email: 'alex@example.com', phone: '07123 456789', requests: 'Gluten free', turnstileToken: 'test-token', website: '' };
 assert.equal(validateReservation(valid, { now }).valid, true, 'Valid reservation should pass');

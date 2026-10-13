@@ -8,9 +8,9 @@ export const RESERVATION_CONFIG = Object.freeze({
     0: Object.freeze([]),
     1: Object.freeze([]),
     2: Object.freeze([]),
-    3: Object.freeze([{ start: '07:30', end: '16:00' }]),
-    4: Object.freeze([{ start: '07:30', end: '16:00' }, { start: '18:00', end: '23:00' }]),
-    5: Object.freeze([{ start: '07:30', end: '19:00' }]),
+    3: Object.freeze([{ start: '08:00', end: '16:00' }]),
+    4: Object.freeze([{ start: '08:00', end: '16:00' }, { start: '18:00', end: '23:00' }]),
+    5: Object.freeze([{ start: '08:00', end: '20:00' }]),
     6: Object.freeze([{ start: '09:00', end: '15:00' }])
   }),
   reservationSchedule: Object.freeze({
@@ -19,7 +19,7 @@ export const RESERVATION_CONFIG = Object.freeze({
     2: Object.freeze([]),
     3: Object.freeze([{ start: '10:00', lastSlot: '14:00' }]),
     4: Object.freeze([{ start: '10:00', lastSlot: '14:00' }, { start: '18:00', lastSlot: '21:00' }]),
-    5: Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '18:00' }]),
+    5: Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '18:30' }]),
     6: Object.freeze([{ start: '10:00', lastSlot: '14:00' }])
   })
 });
