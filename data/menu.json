@@ -15,7 +15,7 @@
       { "name": "Seasonal Focaccia", "price": "£9.50", "description": "roasted aubergine, garlic, oregano & pomegranate seeds" },
       { "name": "Pork, Fig & Olive Terrine", "price": "£13.00", "description": "with dressed watercress & crispy sourdough" },
       { "name": "Seasonal Soup / Broth", "price": "£9.00", "description": "butternut squash & coconut, chilli flakes, focaccia" },
-      { "name": "Seasonal Salad", "price": "£10.00", "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans" }
+      { "name": "Seasonal Salad", "price": "£10.00", "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans", "addOn": "Add halloumi £3.50" }
     ],
     "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
   },

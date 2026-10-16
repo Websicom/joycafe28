@@ -1,0 +1,172 @@
+{
+  "_instructions": [
+    "Keep all property names and the overall structure unchanged.",
+    "Update only titles, availability, introductory copy, item names, prices and descriptions.",
+    "The daytime menu uses one items list.",
+    "The evening menu uses sections. Add, remove or rename sections as needed, but keep each section's subtitle and items properties.",
+    "The addOn property is optional and should only be included when an item has an additional option.",
+    "If an item has no description, omit the description property.",
+    "Prices should include the pound sign, for example £9.50.",
+    "Return this as a valid .json file without comments or additional formatting."
+  ],
+  "daytime": {
+    "title": "Brunch / Lunch",
+    "availabilityLabel": "Kitchen open:",
+    "availability": "Wednesday – Saturday, 9:30am – 2:30pm",
+    "intro": "Our menu changes with the seasons while keeping a few core favourites. Expect nourishing food, simple plates and things we genuinely love to eat.",
+    "items": [
+      {
+        "name": "Warm Banana Bread",
+        "price": "£5.50",
+        "description": "with organic butter & maple candied pecans"
+      },
+      {
+        "name": "Toasted Corn Bread",
+        "price": "£5.50",
+        "description": "with jalapeño honey butter"
+      },
+      {
+        "name": "Açaí Bowl",
+        "price": "£9.00",
+        "description": "topped with sliced banana, cashew & cinnamon granola"
+      },
+      {
+        "name": "Eggs",
+        "price": "£9.00",
+        "description": "soft boiled on toasted rye topped with kale & seeds"
+      },
+      {
+        "name": "Eggy Bread",
+        "price": "£10.50",
+        "description": "sourdough, pan-fried halloumi, sweet chilli jam, dressed rocket & dukkah"
+      },
+      {
+        "name": "Whipped Avocado",
+        "price": "£9.50",
+        "description": "on toasted sourdough with lemon, crumbled feta, dressed rocket & seeds"
+      },
+      {
+        "name": "Baron Bigod",
+        "price": "£10.00",
+        "description": "British cheese from Suffolk on toasted cranberry rye with fig & honey chutney"
+      },
+      {
+        "name": "Seasonal Focaccia",
+        "price": "£9.50",
+        "description": "roasted aubergine, garlic, oregano & pomegranate seeds"
+      },
+      {
+        "name": "Pork, Fig & Olive Terrine",
+        "price": "£13.00",
+        "description": "with dressed watercress & crispy sourdough"
+      },
+      {
+        "name": "Seasonal Soup / Broth",
+        "price": "£9.00",
+        "description": "butternut squash & coconut, chilli flakes, focaccia"
+      },
+      {
+        "name": "Seasonal Salad",
+        "price": "£10.00",
+        "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans",
+        "addOn": "Add halloumi £3.50"
+      }
+    ],
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
+  },
+  "evening": {
+    "title": "Evening Menu",
+    "availabilityLabel": "Kitchen open:",
+    "availability": "Thursday 6pm – 9pm & Friday 3:30pm – 6:30pm",
+    "intro": "Our cheeses are carefully selected from award-winning Rennet & Rind. Our charcuterie comes from Sunday Charcuterie, known for 100% British cured meats. Both are best enjoyed with good bread, perhaps some olives, and naturally, a lovely glass of wine.",
+    "introNote": "All plates are designed for one, or can be shared between two for a smaller bite.",
+    "sections": [
+      {
+        "subtitle": "Nibbles",
+        "items": [
+          {
+            "name": "Gordal Olives",
+            "price": "£5.00"
+          },
+          {
+            "name": "Focaccia, Olive Oil & Balsamic",
+            "price": "£4.00"
+          },
+          {
+            "name": "Warm Cranberry Rye & Butter",
+            "price": "£4.00"
+          },
+          {
+            "name": "Half a Baked Feta, Honey Drizzle",
+            "price": "£5.50"
+          },
+          {
+            "name": "Cooked Chorizo, Apple Cider Vinegar",
+            "price": "£6.50"
+          },
+          {
+            "name": "Garlic & Black Pepper Salami",
+            "price": "£5.00"
+          }
+        ]
+      },
+      {
+        "subtitle": "Plates",
+        "items": [
+          {
+            "name": "Baron Bigod",
+            "price": "£10.00",
+            "description": "British cheese from Suffolk on toasted cranberry rye with fig & honey chutney"
+          },
+          {
+            "name": "Délice de Bourgogne",
+            "price": "£10.00",
+            "description": "our favourite French cheese, toasted focaccia & red onion chutney"
+          },
+          {
+            "name": "Cheese Plate",
+            "price": "£15.00",
+            "description": "Baron Bigod, Alpen Cheddar and The Duke, sourdough crackers, fig & honey chutney"
+          },
+          {
+            "name": "Fennel Salami & Lincolnshire Poacher",
+            "price": "£13.00",
+            "description": "cornichons, sourdough crackers"
+          },
+          {
+            "name": "Pork, Fig & Olive Terrine",
+            "price": "£13.00",
+            "description": "with dressed watercress & crispy sourdough"
+          },
+          {
+            "name": "Bresaola",
+            "price": "£12.00",
+            "description": "rocket, shaved Lincolnshire Poacher"
+          },
+          {
+            "name": "Seasonal Salad",
+            "price": "£10.00",
+            "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans",
+            "addOn": "Add halloumi £3.50"
+          }
+        ]
+      },
+      {
+        "subtitle": "Something Sweet",
+        "items": [
+          {
+            "name": "Affogato",
+            "price": "£6.00",
+            "description": "espresso, organic clotted cream ice cream & pistachio biscuit crumb"
+          },
+          {
+            "name": "Seasonal Sweet Treat",
+            "price": "£4.00",
+            "description": "a small sweet treat that changes with the season"
+          }
+        ]
+      }
+    ],
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements, and we'll always do our best to accommodate you."
+  }
+}
