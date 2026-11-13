@@ -17,7 +17,8 @@
       { "name": "Seasonal Soup / Broth", "price": "£9.00", "description": "butternut squash & coconut, chilli flakes, focaccia" },
       { "name": "Seasonal Salad", "price": "£10.00", "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans", "addOn": "Add halloumi £3.50" }
     ],
-    "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you."
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements and we'll always do our best to accommodate you.",
+    "sampleNote": "This is a sample menu. Our dishes change with the seasons and may vary depending on ingredient availability."
   },
   "evening": {
     "title": "Evening Menu",
@@ -43,9 +44,9 @@
           { "name": "Baron Bigod", "price": "£10.00", "description": "British cheese from Suffolk on toasted cranberry rye with fig & honey chutney" },
           { "name": "Délice de Bourgogne", "price": "£10.00", "description": "our favourite French cheese, toasted focaccia & red onion chutney" },
           { "name": "Cheese Plate", "price": "£15.00", "description": "Baron Bigod, Alpen Cheddar and The Duke, sourdough crackers, fig & honey chutney" },
-          { "name": "Fennel Salami & Lincolnshire Poacher", "price": "£13.00", "description": "cornichons, sourdough crackers" },
+          { "name": "Garlic & Black Pepper Salami", "price": "£12.00", "description": "shaved Lincolnshire poacher, grated cornichons, focaccia crostinis" },
+          { "name": "Kern", "price": "£9.50", "description": "Girello, fig, toasted cranberry rye & chutney" },
           { "name": "Pork, Fig & Olive Terrine", "price": "£13.00", "description": "with dressed watercress & crispy sourdough" },
-          { "name": "Bresaola", "price": "£12.00", "description": "rocket, shaved Lincolnshire Poacher" },
           { "name": "Seasonal Salad", "price": "£10.00", "description": "roasted squash, kale, pomegranate seeds, shaved Lincolnshire Poacher & maple candied pecans", "addOn": "Add halloumi £3.50" }
         ]
       },
@@ -57,6 +58,7 @@
         ]
       }
     ],
-    "allergyNote": "Please let us know if you have any allergies or dietary requirements, and we'll always do our best to accommodate you."
+    "allergyNote": "Please let us know if you have any allergies or dietary requirements, and we'll always do our best to accommodate you.",
+    "sampleNote": "This is a sample menu. Our dishes change with the seasons and may vary depending on ingredient availability."
   }
 }

@@ -8,6 +8,11 @@
   "telephoneHref": "tel:01763230140",
   "instagram": "https://www.instagram.com/joycafe.28",
   "instagramHandle": "@joycafe.28",
+  "seasonalOpeningNotice": {
+    "message": "Opening times may vary around Christmas and New Year.",
+    "startDate": "2026-11-13T00:00:00Z",
+    "endDate": "2027-01-01T23:59:59Z"
+  },
   "address": {
     "street": "28 Station Road",
     "locality": "Melbourn",

@@ -5,5 +5,12 @@
     "message": "Joy Cafe opens Wednesday 9 September. Bookings are now open.",
     "startDate": "2026-09-01T00:00:00+01:00",
     "endDate": "2026-09-09T23:59:59+01:00"
+  },
+  {
+    "id": "december-fridays-2026",
+    "enabled": true,
+    "message": "A little December update · We’ll be staying open until 11pm on Fridays throughout December.",
+    "startDate": "2026-11-13T00:00:00Z",
+    "endDate": "2026-12-25T23:59:59Z"
   }
 ]

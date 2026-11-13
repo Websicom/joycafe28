@@ -39,7 +39,7 @@
   check(status.classList.contains('is-error') && getComputedStyle(status).backgroundColor === 'rgb(255, 241, 240)', 'Failure has red background');
   const date = form.elements.date.options[1].value;
   const fill = () => {
-    change('name', 'LOCAL TEST ONLY'); change('partySize', '3'); change('date', date);
+    change('name', 'LOCAL TEST ONLY'); change('partySize', '3'); change('purpose', 'Food & drinks'); change('date', date);
     change('time', form.elements.time.options[1].value);
     change('email', 'test@example.com'); change('phone', '07123 456789');
   };

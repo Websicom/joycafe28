@@ -54,6 +54,7 @@ const renderMenuContent = (menuData, sectionPrefix) => {
 
 const renderAvailability = (menuData) => `${menuData.availabilityLabel ? `<strong>${escapeHtml(menuData.availabilityLabel)}</strong> ` : ''}${escapeHtml(menuData.availability)}`;
 const renderIntroNote = (menuData) => menuData.introNote ? `<p class="menu-intro-note">${escapeHtml(menuData.introNote)}</p>` : '';
+const renderTimedNotice = (notice) => notice ? `<p class="hours-note" data-start-date="${escapeHtml(notice.startDate)}" data-end-date="${escapeHtml(notice.endDate)}" hidden>${escapeHtml(notice.message)}</p>` : '';
 
 const renderFaqs = () => faqs.map((item, index) => `<article class="faq-item">
   <h3><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-${index + 1}"><span>${escapeHtml(item.question)}</span><span aria-hidden="true">+</span></button></h3>
@@ -85,9 +86,9 @@ const replacements = {
   INLINE_CSS: inlineCss,
   LOCAL_BUSINESS_JSONLD: safeJson(businessSchema), FAQ_JSONLD: safeJson(faqSchema),
   PARTY_OPTIONS: Array.from({ length: RESERVATION_CONFIG.partySize.max - RESERVATION_CONFIG.partySize.min + 1 }, (_, index) => index + RESERVATION_CONFIG.partySize.min).map((size) => `<option value="${size}">${size} ${size === 1 ? 'person' : 'people'}</option>`).join(''),
-  DAY_MENU_TITLE: escapeHtml(menu.daytime.title), DAY_MENU_AVAILABILITY: renderAvailability(menu.daytime), DAY_MENU_INTRO: escapeHtml(menu.daytime.intro), DAY_MENU_INTRO_NOTE: renderIntroNote(menu.daytime), DAY_MENU_CONTENT: renderMenuContent(menu.daytime, 'day-menu'), DAY_ALLERGY_NOTE: escapeHtml(menu.daytime.allergyNote),
-  EVENING_MENU_TITLE: escapeHtml(menu.evening.title), EVENING_MENU_AVAILABILITY: renderAvailability(menu.evening), EVENING_MENU_INTRO: escapeHtml(menu.evening.intro), EVENING_MENU_INTRO_NOTE: renderIntroNote(menu.evening), EVENING_MENU_CONTENT: renderMenuContent(menu.evening, 'evening-menu'), EVENING_ALLERGY_NOTE: escapeHtml(menu.evening.allergyNote),
-  OPENING_HOURS: renderHours(), FAQ_ITEMS: renderFaqs(), DIRECTIONS_URL: escapeHtml(site.map.directionsUrl)
+  DAY_MENU_TITLE: escapeHtml(menu.daytime.title), DAY_MENU_AVAILABILITY: renderAvailability(menu.daytime), DAY_MENU_INTRO: escapeHtml(menu.daytime.intro), DAY_MENU_INTRO_NOTE: renderIntroNote(menu.daytime), DAY_MENU_CONTENT: renderMenuContent(menu.daytime, 'day-menu'), DAY_ALLERGY_NOTE: escapeHtml(menu.daytime.allergyNote), DAY_SAMPLE_NOTE: escapeHtml(menu.daytime.sampleNote),
+  EVENING_MENU_TITLE: escapeHtml(menu.evening.title), EVENING_MENU_AVAILABILITY: renderAvailability(menu.evening), EVENING_MENU_INTRO: escapeHtml(menu.evening.intro), EVENING_MENU_INTRO_NOTE: renderIntroNote(menu.evening), EVENING_MENU_CONTENT: renderMenuContent(menu.evening, 'evening-menu'), EVENING_ALLERGY_NOTE: escapeHtml(menu.evening.allergyNote), EVENING_SAMPLE_NOTE: escapeHtml(menu.evening.sampleNote),
+  OPENING_HOURS: renderHours(), OPENING_NOTICE: renderTimedNotice(site.seasonalOpeningNotice), FAQ_ITEMS: renderFaqs(), DIRECTIONS_URL: escapeHtml(site.map.directionsUrl)
 };
 for (const [key, value] of Object.entries(replacements)) homepage = homepage.replaceAll(`{{${key}}}`, value);
 assert(!homepage.includes('{{'), 'an unresolved homepage template token remains.');

@@ -17,6 +17,11 @@ assert.equal(getReservationSlots('2026-09-11', { now }).every((time) => time.end
 assert.equal(getReservationSlots('2026-09-11', { now }).at(-1), '18:30', 'Friday reservations should include the additional 18:30 slot');
 assert.equal(getReservationSlots('2026-09-12', { now })[0], '10:00', 'Saturday reservations should begin at 10:00');
 assert.equal(getReservationSlots('2026-09-12', { now }).at(-1), '14:00', 'Saturday reservations should end at 14:00');
+const decemberNow = new Date('2026-11-13T12:00:00Z');
+for (const date of ['2026-12-04', '2026-12-11', '2026-12-18']) assert.equal(getReservationSlots(date, { now: decemberNow }).at(-1), '21:00', `${date} should accept reservations through 9pm`);
+for (const date of ['2026-12-25', '2026-12-26', '2027-01-01']) assert.deepEqual(getReservationSlots(date, { now: decemberNow }), [], `${date} should be closed for reservations`);
+assert.equal(getReservationSlots('2026-12-31', { now: decemberNow }).at(-1), '14:30', 'New Year’s Eve reservations should end at 2:30pm');
+assert(!getReservationSlots('2026-12-31', { now: decemberNow }).includes('18:00'), 'New Year’s Eve evening reservations should be unavailable');
 assert.deepEqual(getReservationSlots('2026-09-05', { now }), [], 'Same-day slots must not be offered');
 assert.equal(getOpenDates(now)[0], '2026-09-09', 'Open dates must exclude today');
 assert.deepEqual(getReservationSlots('2026-09-04', { now }), [], 'Past dates must have no slots');
@@ -29,7 +34,7 @@ assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Wednesday').times,
 assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Thursday').times, ['8am – 4pm', '6pm – 11pm'], 'Public Thursday opening hours should use the new 8am start');
 assert.deepEqual(getDisplayHours().find(({ day }) => day === 'Friday').times, ['8am – 8pm'], 'Public Friday opening hours should use the new 8am to 8pm hours');
 
-const valid = { name: 'Alex Example', partySize: '2', date: '2026-09-09', time: '12:00', email: 'alex@example.com', phone: '07123 456789', requests: 'Gluten free', turnstileToken: 'test-token', website: '' };
+const valid = { name: 'Alex Example', partySize: '2', purpose: 'Food & drinks', date: '2026-09-09', time: '12:00', email: 'alex@example.com', phone: '07123 456789', requests: 'Gluten free', turnstileToken: 'test-token', website: '' };
 assert.equal(validateReservation(valid, { now }).valid, true, 'Valid reservation should pass');
 for (const phone of ['1', '07968 953398', '+44 (0) 7968 953398', '01763/230140', '01763 230140 ext 2']) {
   assert.equal(validateReservation({ ...valid, phone }, { now }).valid, true, `Phone entry should be accepted: ${phone}`);
@@ -43,6 +48,8 @@ assert.equal(validateReservation({ ...valid, time: '16:00' }, { now }).errors.ti
 assert.equal(validateReservation({ ...valid, partySize: '99' }, { now }).errors.partySize.length > 0, true, 'Altered party size should fail');
 assert.equal(validateReservation({ ...valid, partySize: '6' }, { now }).valid, true, 'Party size of six should be accepted');
 assert.equal(validateReservation({ ...valid, partySize: '7' }, { now }).errors.partySize.length > 0, true, 'Party size above six should fail');
+assert.ok(validateReservation({ ...valid, purpose: '' }, { now }).errors.purpose, 'Joining purpose should be required');
+assert.ok(validateReservation({ ...valid, purpose: 'Altered value' }, { now }).errors.purpose, 'Altered joining purpose should fail');
 assert.equal(validateReservation({ ...valid, email: 'bad\r\nBcc:test@example.com' }, { now }).errors.email.length > 0, true, 'Header injection should fail');
 assert.equal(validateReservation({ ...valid, name: '' }, { now }).errors.name.length > 0, true, 'Missing required fields should fail');
 
@@ -51,7 +58,7 @@ assert.equal(email.to, 'steff@joycafe28.com');
 assert.deepEqual(email.from, { email: 'bookings@joycafe28.com', name: 'Joy Website Reservations' });
 assert.equal(email.replyTo, 'alex@example.com');
 assert.match(email.subject, /^New table reservation request: Alex Example, 2026-09-09 at 12:00$/);
-for (const value of ['Alex Example', '2', 'Wednesday, 9 September 2026', '12:00pm', 'alex@example.com', '07123 456789', 'Gluten free']) assert(email.text.includes(value));
+for (const value of ['Alex Example', '2', 'Food & drinks', 'Wednesday, 9 September 2026', '12:00pm', 'alex@example.com', '07123 456789', 'Gluten free']) assert(email.text.includes(value));
 
 let sent;
 const env = {
@@ -70,6 +77,8 @@ assert.equal(success.status, 200, 'Successful Function request should return 200
 assert.equal((await success.json()).ok, true);
 assert.equal(sent.secret, '12345678901234567890123456789012', 'Worker should authenticate to the private Google webhook');
 assert.equal(sent.reservation.email, valid.email, 'Worker should forward the validated customer address');
+assert.equal(sent.reservation.purpose, valid.purpose, 'Worker should forward what the guest is joining for');
+assert.match(sent.reservation.requests, /^Joining us for: Food & drinks\nGluten free$/, 'Existing email integration should receive the joining purpose with the guest notes');
 
 sent = undefined;
 const deliveryFailure = await handleReservation(request(valid), env, { now, fetch: async () => Response.json({ ok: false }) });

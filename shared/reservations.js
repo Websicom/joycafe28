@@ -3,7 +3,8 @@ export const RESERVATION_CONFIG = Object.freeze({
   slotMinutes: 30,
   bookingWindowDays: 90,
   partySize: { min: 1, max: 6 },
-  limits: Object.freeze({ name: 100, email: 254, phone: 40, requests: 1000 }),
+  purposes: Object.freeze(['Food & drinks', 'Drinks only', "Haven't decided yet"]),
+  limits: Object.freeze({ name: 100, purpose: 64, email: 254, phone: 40, requests: 1000 }),
   schedule: Object.freeze({
     0: Object.freeze([]),
     1: Object.freeze([]),
@@ -21,6 +22,15 @@ export const RESERVATION_CONFIG = Object.freeze({
     4: Object.freeze([{ start: '10:00', lastSlot: '14:00' }, { start: '18:00', lastSlot: '21:00' }]),
     5: Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '18:30' }]),
     6: Object.freeze([{ start: '10:00', lastSlot: '14:00' }])
+  }),
+  reservationOverrides: Object.freeze({
+    '2026-12-04': Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '21:00' }]),
+    '2026-12-11': Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '21:00' }]),
+    '2026-12-18': Object.freeze([{ start: '10:00', lastSlot: '13:45' }, { start: '14:00', lastSlot: '21:00' }]),
+    '2026-12-25': Object.freeze([]),
+    '2026-12-26': Object.freeze([]),
+    '2026-12-31': Object.freeze([{ start: '10:00', lastSlot: '14:30' }]),
+    '2027-01-01': Object.freeze([])
   })
 });
 
@@ -59,7 +69,9 @@ export function getReservationSlots(dateValue, { now = new Date(), excludePast =
   const parsed = new Date(`${dateValue}T12:00:00Z`);
   if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== dateValue) return [];
   if (excludePast && (dateValue <= getLondonToday(now) || dateValue > addDays(getLondonToday(now), RESERVATION_CONFIG.bookingWindowDays))) return [];
-  const periods = RESERVATION_CONFIG.reservationSchedule[getWeekday(dateValue)] || [];
+  const periods = Object.hasOwn(RESERVATION_CONFIG.reservationOverrides, dateValue)
+    ? RESERVATION_CONFIG.reservationOverrides[dateValue]
+    : (RESERVATION_CONFIG.reservationSchedule[getWeekday(dateValue)] || []);
   const slots = periods.flatMap(({ start, lastSlot }) => {
     const slots = [];
     for (let time = toMinutes(start); time <= toMinutes(lastSlot); time += RESERVATION_CONFIG.slotMinutes) {
@@ -107,6 +119,7 @@ export function validateReservation(input, { now = new Date(), availability } = 
   const value = {
     name: cleanSingleLine(input?.name),
     partySize: Number(input?.partySize),
+    purpose: cleanSingleLine(input?.purpose),
     date: cleanSingleLine(input?.date),
     time: cleanSingleLine(input?.time),
     email: cleanSingleLine(input?.email).toLowerCase(),
@@ -118,6 +131,7 @@ export function validateReservation(input, { now = new Date(), availability } = 
   if (!value.name) errors.name = 'Please enter your name.';
   else if (value.name.length > limits.name || /[\r\n]/.test(value.name)) errors.name = `Name must be ${limits.name} characters or fewer.`;
   if (!Number.isInteger(value.partySize) || value.partySize < RESERVATION_CONFIG.partySize.min || value.partySize > RESERVATION_CONFIG.partySize.max) errors.partySize = 'Please choose a valid party size.';
+  if (value.purpose.length > limits.purpose || !RESERVATION_CONFIG.purposes.includes(value.purpose)) errors.purpose = 'Please select what you’ll be joining us for.';
   const today = getLondonToday(now);
   const lastDate = addDays(today, RESERVATION_CONFIG.bookingWindowDays);
   const slots = availability ? (availability[value.date] || []) : getReservationSlots(value.date, { now });

@@ -1,6 +1,6 @@
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
-import { getActiveAnnouncement } from '../assets/js/announcements.js';
+import { getActiveAnnouncement, isActiveDateRange } from '../assets/js/announcements.js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const pages = ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
@@ -67,13 +67,18 @@ assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use t
 assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
 assert(homepage.includes('id="booking-name"') && homepage.includes('id="booking-date"') && homepage.includes('id="booking-time"') && homepage.includes('Send reservation request'), 'index.html: reservation request form needs all key fields and its submit action');
 assert(homepage.includes('id="booking-email"') && homepage.includes('id="booking-phone"') && homepage.includes('id="booking-requests"'), 'index.html: reservation form needs contact and requests fields');
+assert(homepage.includes('id="booking-purpose"') && homepage.includes('What will you be joining us for?') && homepage.includes('Please select an option') && homepage.includes('Food &amp; drinks') && homepage.includes('Drinks only') && homepage.includes('Haven&#39;t decided yet'), 'index.html: reservation form needs the joining-purpose select');
 assert(!homepage.includes('booking-service') && !homepage.includes('Find a table'), 'index.html: old SumUp controls should be removed');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');
-assert(homepage.includes('class="announcement" id="announcement" aria-live="polite"><span>') && !homepage.includes('id="announcement" aria-live="polite"><span>Joy Cafe opens Wednesday 9 September. Bookings are now open.</span><a'), 'index.html: announcement should not include a booking link');
+assert(homepage.includes('class="announcement" id="announcement" aria-live="polite" hidden'), 'index.html: announcement should remain hidden until its active dates are checked');
 assert(!homepage.includes('↗') && homepage.includes('class="link-arrow"'), 'index.html: arrows should use Safari-safe line SVGs');
 assert(homepage.includes('joy-cafe-melbourn-interior-mobile.avif'), 'index.html: mobile hero should use the optimized AVIF source');
 assert(homepage.includes('/assets/brand/joy-main-logo.svg') && homepage.includes('/assets/documents/joy-wine-list.pdf'), 'index.html: updated logo and wine list should be linked');
+assert(homepage.includes('Wine &amp; drinks list') && homepage.includes('View the wine &amp; drinks list'), 'index.html: attached PDF should be presented as the wine and drinks list');
+assert((homepage.match(/This is a sample menu\. Our dishes change with the seasons and may vary depending on ingredient availability\./g) || []).length === 2, 'index.html: both menus should include the sample-menu note');
+assert(homepage.includes('<h3>Garlic &amp; Black Pepper Salami</h3>') && homepage.includes('<h3>Kern</h3>') && !homepage.includes('<h3>Fennel Salami &amp; Lincolnshire Poacher</h3>') && !homepage.includes('<h3>Bresaola</h3>'), 'index.html: evening plates should include the December replacements');
+assert(homepage.includes('Opening times may vary around Christmas and New Year.') && homepage.includes('data-end-date="2027-01-01T23:59:59Z"'), 'index.html: seasonal opening-hours note should expire at the start of 2 January');
 assert(homepage.includes('/assets/images/marble-bg.webp'), 'index.html: marble texture should be included in the requested sections');
 assert(homepage.includes('rgba(251,250,246,.9)'), 'index.html: marble texture should remain subtle beneath the light sage day background');
 assert(homepage.includes('--page-bg:#fbfaf6') && homepage.includes('--sage:#acb095') && homepage.includes('--page-bg:#473f3a') && homepage.includes('--text:#fffaf6'), 'index.html: requested light palette and #473f3a white-text dark palette should be inlined');
@@ -101,6 +106,11 @@ assert(!homepage.includes('<div class="footer-brand"><img src="/assets/brand/joy
 const announcements = JSON.parse(await readFile(path.join(root, 'data', 'announcements.json'), 'utf8'));
 assert(getActiveAnnouncement(announcements, new Date('2026-09-09T22:00:00+01:00'))?.id === 'opening-2026', 'opening announcement should be active on 9 September');
 assert(!getActiveAnnouncement(announcements, new Date('2026-09-10T00:00:00+01:00')), 'opening announcement should expire on 10 September');
+assert(getActiveAnnouncement(announcements, new Date('2026-12-18T12:00:00Z'))?.id === 'december-fridays-2026', 'December Friday announcement should be active before Christmas');
+assert(getActiveAnnouncement(announcements, new Date('2026-12-25T23:59:59Z'))?.id === 'december-fridays-2026', 'December Friday announcement should remain active through 25 December');
+assert(!getActiveAnnouncement(announcements, new Date('2026-12-26T00:00:00Z')), 'December Friday announcement should expire after 25 December');
+assert(isActiveDateRange({ startDate: '2026-11-13T00:00:00Z', endDate: '2027-01-01T23:59:59Z' }, new Date('2027-01-01T23:59:59Z')), 'seasonal opening note should remain active through 1 January');
+assert(!isActiveDateRange({ startDate: '2026-11-13T00:00:00Z', endDate: '2027-01-01T23:59:59Z' }, new Date('2027-01-02T00:00:00Z')), 'seasonal opening note should disappear on 2 January');
 
 const sitemap = await readFile(path.join(root, 'sitemap.xml'), 'utf8');
 assert(!sitemap.includes('404.html'), 'sitemap must not contain the 404 page');

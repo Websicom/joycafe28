@@ -11,7 +11,7 @@ export function buildReservationEmail(value) {
   const time = formatTime(value.time);
   const requests = value.requests || 'None provided';
   const rows = [
-    ['Name', value.name], ['Number of people', value.partySize], ['Date', date], ['Time', time],
+    ['Name', value.name], ['Number of people', value.partySize], ['Joining us for', value.purpose], ['Date', date], ['Time', time],
     ['Email', value.email], ['Phone', value.phone], ['Dietaries, allergies or special requests', requests]
   ];
   const text = ['New table reservation request', '', ...rows.map(([label, entry]) => `${label}: ${entry}`), '', 'This is a reservation request, not an automatic confirmation.'].join('\n');
@@ -27,6 +27,7 @@ export function buildReservationEmail(value) {
 }
 
 async function sendViaGoogleAppsScript(value, env, fetcher) {
+  const bookingDetails = [`Joining us for: ${value.purpose}`, value.requests].filter(Boolean).join('\n');
   const response = await fetcher(env.GOOGLE_APPS_SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
@@ -35,13 +36,14 @@ async function sendViaGoogleAppsScript(value, env, fetcher) {
       reservation: {
         name: value.name,
         partySize: value.partySize,
+        purpose: value.purpose,
         date: value.date,
         dateLabel: formatDate(value.date),
         time: value.time,
         timeLabel: formatTime(value.time),
         email: value.email,
         phone: value.phone,
-        requests: value.requests || ''
+        requests: bookingDetails
       }
     }),
     redirect: 'follow'
