@@ -3,7 +3,7 @@ import path from 'node:path';
 import { getActiveAnnouncement, isActiveDateRange } from '../assets/js/announcements.js';
 
 const root = path.resolve(import.meta.dirname, '..');
-const pages = ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
+const pages = ['index.html', 'index-2.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
 const errors = [];
 const assert = (condition, message) => { if (!condition) errors.push(message); };
 const exists = async (filename) => { try { return (await stat(filename)).isFile(); } catch { return false; } };
@@ -22,6 +22,11 @@ for (const page of pages) {
 }
 
 const homepage = await readFile(path.join(root, 'index.html'), 'utf8');
+const bookingPreview = await readFile(path.join(root, 'index-2.html'), 'utf8');
+assert(bookingPreview.includes('<meta name="robots" content="noindex,nofollow">'), 'index-2.html: booking preview should not be indexed');
+assert(bookingPreview.includes('src="https://book.joycafe28.com/embed"') && bookingPreview.includes('title="Book a table at joy"'), 'index-2.html: booking iframe is missing or inaccessible');
+assert(bookingPreview.includes('width: 100%; height: 700px; border: 0; display: block; background: #fbfaf6;'), 'index-2.html: booking iframe should use the supplied presentation');
+assert(!bookingPreview.includes('id="booking-form"'), 'index-2.html: original booking form should be replaced');
 const claritudeTag = '<script defer src="https://app.claritude.io/c.js" data-property="cl_49ca68b3acff4554bdc674faf0bd8af9"></script>';
 assert(homepage.includes(claritudeTag) && homepage.indexOf(claritudeTag) < homepage.indexOf('</head>'), 'index.html: Claritude tracking must be present once in the document head');
 assert(homepage.split(claritudeTag).length === 2, 'index.html: Claritude tracking must not be duplicated');
