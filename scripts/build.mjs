@@ -118,7 +118,7 @@ await writeFile(path.join(root, 'site.webmanifest'), JSON.stringify({ name: site
 const out = path.join(root, 'dist');
 await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
-for (const item of ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html', 'robots.txt', 'sitemap.xml', 'site.webmanifest', 'favicon.ico', 'assets', 'data', 'shared']) {
+for (const item of ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html', 'robots.txt', 'sitemap.xml', 'site.webmanifest', 'favicon.ico', '_redirects', 'assets', 'data', 'shared']) {
   const source = path.join(root, item);
   if (existsSync(source)) await cp(source, path.join(out, item), { recursive: true });
 }

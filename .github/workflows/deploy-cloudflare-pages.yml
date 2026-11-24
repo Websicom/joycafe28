@@ -45,22 +45,3 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Purge retired booking preview
-        shell: bash
-        run: |
-          zone_id="$(curl --fail --silent --show-error \
-            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            "https://api.cloudflare.com/client/v4/zones?name=joycafe28.com&account.id=$CLOUDFLARE_ACCOUNT_ID" \
-            | jq -r '.result[0].id')"
-          test -n "$zone_id" && test "$zone_id" != "null"
-          curl --fail-with-body --silent --show-error \
-            --request POST \
-            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            --header "Content-Type: application/json" \
-            --data '{"files":["https://joycafe28.com/index-2","https://joycafe28.com/index-2.html"]}' \
-            "https://api.cloudflare.com/client/v4/zones/$zone_id/purge_cache" \
-            | jq -e '.success == true'
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
