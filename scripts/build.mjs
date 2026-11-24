@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { getDisplayHours, RESERVATION_CONFIG } from '../shared/reservations.js';
+import { getDisplayHours } from '../shared/reservations.js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const readJson = async (name) => JSON.parse(await readFile(path.join(root, 'data', name), 'utf8'));
@@ -85,7 +85,6 @@ const inlineCss = await readFile(path.join(root, 'assets', 'css', 'styles.css'),
 const replacements = {
   INLINE_CSS: inlineCss,
   LOCAL_BUSINESS_JSONLD: safeJson(businessSchema), FAQ_JSONLD: safeJson(faqSchema),
-  PARTY_OPTIONS: Array.from({ length: RESERVATION_CONFIG.partySize.max - RESERVATION_CONFIG.partySize.min + 1 }, (_, index) => index + RESERVATION_CONFIG.partySize.min).map((size) => `<option value="${size}">${size} ${size === 1 ? 'person' : 'people'}</option>`).join(''),
   DAY_MENU_TITLE: escapeHtml(menu.daytime.title), DAY_MENU_AVAILABILITY: renderAvailability(menu.daytime), DAY_MENU_INTRO: escapeHtml(menu.daytime.intro), DAY_MENU_INTRO_NOTE: renderIntroNote(menu.daytime), DAY_MENU_CONTENT: renderMenuContent(menu.daytime, 'day-menu'), DAY_ALLERGY_NOTE: escapeHtml(menu.daytime.allergyNote), DAY_SAMPLE_NOTE: escapeHtml(menu.daytime.sampleNote),
   EVENING_MENU_TITLE: escapeHtml(menu.evening.title), EVENING_MENU_AVAILABILITY: renderAvailability(menu.evening), EVENING_MENU_INTRO: escapeHtml(menu.evening.intro), EVENING_MENU_INTRO_NOTE: renderIntroNote(menu.evening), EVENING_MENU_CONTENT: renderMenuContent(menu.evening, 'evening-menu'), EVENING_ALLERGY_NOTE: escapeHtml(menu.evening.allergyNote), EVENING_SAMPLE_NOTE: escapeHtml(menu.evening.sampleNote),
   OPENING_HOURS: renderHours(), OPENING_NOTICE: renderTimedNotice(site.seasonalOpeningNotice), FAQ_ITEMS: renderFaqs(), DIRECTIONS_URL: escapeHtml(site.map.directionsUrl)
@@ -93,21 +92,6 @@ const replacements = {
 for (const [key, value] of Object.entries(replacements)) homepage = homepage.replaceAll(`{{${key}}}`, value);
 assert(!homepage.includes('{{'), 'an unresolved homepage template token remains.');
 await writeFile(path.join(root, 'index.html'), homepage);
-
-const bookingFormPattern = /      <form class="booking-form" id="booking-form"[\s\S]*?      <\/form>/;
-const bookingIframe = `      <iframe
-        src="https://book.joycafe28.com/embed"
-        title="Book a table at joy"
-        style="width: 100%; height: 700px; border: 0; display: block; background: #fbfaf6;"
-        data-reveal="right"
-      ></iframe>`;
-assert(bookingFormPattern.test(homepage), 'the homepage booking form could not be found for index-2.html.');
-const bookingPreview = homepage
-  .replace('<meta name="description"', '<meta name="robots" content="noindex,nofollow">\n  <meta name="description"')
-  .replace(bookingFormPattern, bookingIframe);
-assert(!bookingPreview.includes('id="booking-form"'), 'index-2.html still contains the original booking form.');
-assert(bookingPreview.includes('src="https://book.joycafe28.com/embed"'), 'index-2.html is missing the booking iframe.');
-await writeFile(path.join(root, 'index-2.html'), bookingPreview);
 
 const legalFooter = `<footer class="site-footer"><div class="footer-brand"><img src="/assets/brand/joy-main-logo.svg" alt="Joy Cafe & Wine Bar" width="900" height="820"></div><div><h2>Visit</h2><address>28 Station Road<br>Melbourn<br>Royston<br>SG8 6DX</address></div><div><h2>Contact</h2><a href="mailto:${escapeHtml(site.email)}">${escapeHtml(site.email)}</a><a href="${escapeHtml(site.telephoneHref)}">${escapeHtml(site.telephone)}</a></div><div><h2>Legal</h2><a href="/privacy-policy.html">Privacy Policy</a><a href="/cookie-policy.html">Cookie Policy</a><a href="/terms.html">Website Terms</a></div><div class="footer-bottom"><p>© 2026 Joy Cafe Ltd</p><p>Company No. ${escapeHtml(site.companyNumber)}</p><p>Website designed by <a href="https://websi.com/" target="_blank" rel="noopener noreferrer">Websi</a></p></div></footer>`;
 const iconLinks = `<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/brand/joy-favicon.png" type="image/png"><link rel="icon" href="/assets/brand/joy-favicon.webp" type="image/webp"><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png" sizes="180x180"><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon-152x152.png" sizes="152x152"><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon-120x120.png" sizes="120x120">`;
@@ -134,7 +118,7 @@ await writeFile(path.join(root, 'site.webmanifest'), JSON.stringify({ name: site
 const out = path.join(root, 'dist');
 await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
-for (const item of ['index.html', 'index-2.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html', 'robots.txt', 'sitemap.xml', 'site.webmanifest', 'favicon.ico', 'assets', 'data', 'shared']) {
+for (const item of ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html', 'robots.txt', 'sitemap.xml', 'site.webmanifest', 'favicon.ico', 'assets', 'data', 'shared']) {
   const source = path.join(root, item);
   if (existsSync(source)) await cp(source, path.join(out, item), { recursive: true });
 }

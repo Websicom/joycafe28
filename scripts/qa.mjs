@@ -3,7 +3,7 @@ import path from 'node:path';
 import { getActiveAnnouncement, isActiveDateRange } from '../assets/js/announcements.js';
 
 const root = path.resolve(import.meta.dirname, '..');
-const pages = ['index.html', 'index-2.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
+const pages = ['index.html', 'privacy-policy.html', 'cookie-policy.html', 'terms.html', '404.html'];
 const errors = [];
 const assert = (condition, message) => { if (!condition) errors.push(message); };
 const exists = async (filename) => { try { return (await stat(filename)).isFile(); } catch { return false; } };
@@ -22,11 +22,6 @@ for (const page of pages) {
 }
 
 const homepage = await readFile(path.join(root, 'index.html'), 'utf8');
-const bookingPreview = await readFile(path.join(root, 'index-2.html'), 'utf8');
-assert(bookingPreview.includes('<meta name="robots" content="noindex,nofollow">'), 'index-2.html: booking preview should not be indexed');
-assert(bookingPreview.includes('src="https://book.joycafe28.com/embed"') && bookingPreview.includes('title="Book a table at joy"'), 'index-2.html: booking iframe is missing or inaccessible');
-assert(bookingPreview.includes('width: 100%; height: 700px; border: 0; display: block; background: #fbfaf6;'), 'index-2.html: booking iframe should use the supplied presentation');
-assert(!bookingPreview.includes('id="booking-form"'), 'index-2.html: original booking form should be replaced');
 const claritudeTag = '<script defer src="https://app.claritude.io/c.js" data-property="cl_49ca68b3acff4554bdc674faf0bd8af9"></script>';
 assert(homepage.includes(claritudeTag) && homepage.indexOf(claritudeTag) < homepage.indexOf('</head>'), 'index.html: Claritude tracking must be present once in the document head');
 assert(homepage.split(claritudeTag).length === 2, 'index.html: Claritude tracking must not be duplicated');
@@ -70,9 +65,10 @@ assert(!homepage.includes('id="reviews"') && !homepage.includes('{{TESTIMONIALS}
 assert(homepage.indexOf('class="coffee-main"') < homepage.indexOf('class="coffee-inset"'), 'index.html: coffee images should use the main and inset composition');
 assert(homepage.includes('class="nav-chevron"'), 'index.html: menus should use the centred chevron icon');
 assert(homepage.includes('<small>Parking</small>Free parking available'), 'index.html: quick information should include parking availability');
-assert(homepage.includes('id="booking-name"') && homepage.includes('id="booking-date"') && homepage.includes('id="booking-time"') && homepage.includes('Send reservation request'), 'index.html: reservation request form needs all key fields and its submit action');
-assert(homepage.includes('id="booking-email"') && homepage.includes('id="booking-phone"') && homepage.includes('id="booking-requests"'), 'index.html: reservation form needs contact and requests fields');
-assert(homepage.includes('id="booking-purpose"') && homepage.includes('What will you be joining us for?') && homepage.includes('Please select an option') && homepage.includes('Food &amp; drinks') && homepage.includes('Drinks only') && homepage.includes('Haven&#39;t decided yet'), 'index.html: reservation form needs the joining-purpose select');
+assert(homepage.includes('src="https://book.joycafe28.com/embed"') && homepage.includes('title="Book a table at joy"'), 'index.html: booking iframe is missing or inaccessible');
+assert(homepage.includes('width: 100%; height: 700px; border: 0; display: block; background: #fbfaf6;'), 'index.html: booking iframe should use the supplied presentation');
+assert(!homepage.includes('id="booking-form"') && !homepage.includes('id="booking-name"'), 'index.html: original booking form should be removed');
+assert(!homepage.includes('We have limited seating, so booking is recommended for evenings.') && !homepage.includes('For a table today, please call'), 'index.html: superseded booking notes should be removed');
 assert(!homepage.includes('booking-service') && !homepage.includes('Find a table'), 'index.html: old SumUp controls should be removed');
 assert(!homepage.includes('<small>Plan a visit</small>') && !homepage.includes('class="button" href="#book">Book a Table</a><a class="text-link"'), 'index.html: removed booking CTAs should not remain');
 assert(homepage.includes('<div><a class="button" href="mailto:info@joycafe28.com">Get in Touch</a></div>'), 'index.html: final CTA should lead with email contact');
